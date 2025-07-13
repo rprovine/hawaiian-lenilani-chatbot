@@ -1,0 +1,46 @@
+{
+  "name": "hawaiian-lenilani-chatbot",
+  "version": "1.0.0",
+  "description": "AI Chatbot for Hawaiian businesses with authentic cultural integration",
+  "private": true,
+  "scripts": {
+    "setup": "npm run setup:python && npm run setup:frontend",
+    "setup:python": "python -m venv venv && . venv/bin/activate && pip install -r requirements.txt",
+    "setup:frontend": "cd frontend && npm install",
+    "dev": "concurrently \"npm run dev:rasa\" \"npm run dev:actions\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:rasa": "cd rasa_bot && rasa run --enable-api --cors '*' --debug",
+    "dev:actions": "cd rasa_bot && rasa run actions --debug",
+    "dev:backend": "cd api_backend && uvicorn main:app --reload --port 8000",
+    "dev:frontend": "cd frontend && npm start",
+    "train": "cd rasa_bot && rasa train",
+    "test": "npm run test:python && npm run test:frontend",
+    "test:python": "pytest",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm run lint:python && npm run lint:frontend",
+    "lint:python": "flake8 . && black --check . && isort --check-only .",
+    "lint:frontend": "cd frontend && npm run lint",
+    "format": "npm run format:python && npm run format:frontend",
+    "format:python": "black . && isort .",
+    "format:frontend": "cd frontend && npm run format",
+    "build": "npm run build:frontend && npm run train",
+    "build:frontend": "cd frontend && npm run build",
+    "docker:build": "docker-compose -f deployment/docker-compose.hawaiian.yml build",
+    "docker:up": "docker-compose -f deployment/docker-compose.hawaiian.yml up",
+    "docker:down": "docker-compose -f deployment/docker-compose.hawaiian.yml down",
+    "deploy": "bash deployment/deploy.sh"
+  },
+  "keywords": [
+    "chatbot",
+    "ai",
+    "hawaii",
+    "consulting",
+    "rasa",
+    "claude",
+    "hawaiian-business"
+  ],
+  "author": "LeniLani Consulting",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

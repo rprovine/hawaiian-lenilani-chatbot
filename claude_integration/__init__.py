@@ -1,0 +1,1 @@
+# Hawaiian LeniLani Chatbot - Claude Integration Module

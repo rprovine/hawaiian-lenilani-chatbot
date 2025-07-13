@@ -1,0 +1,164 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: hawaiian_postgres
+    environment:
+      POSTGRES_DB: hawaiian_lenilani
+      POSTGRES_USER: ${DB_USER:-lenilani}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-aloha2024}
+      TZ: Pacific/Honolulu
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-lenilani} -d hawaiian_lenilani"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - hawaiian_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: hawaiian_redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-mahalo2024}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - hawaiian_network
+
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile.backend
+    container_name: hawaiian_backend
+    environment:
+      - TZ=Pacific/Honolulu
+      - APP_ENV=production
+      - DATABASE_URL=postgresql://${DB_USER:-lenilani}:${DB_PASSWORD:-aloha2024}@postgres:5432/hawaiian_lenilani
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-mahalo2024}@redis:6379/0
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - HUBSPOT_API_KEY=${HUBSPOT_API_KEY}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,https://hawaii.lenilani.com}
+      - SECRET_KEY=${SECRET_KEY:-aloha-secret-key-change-in-production}
+    volumes:
+      - ../api_backend:/app/api_backend
+    ports:
+      - "8000:8000"
+    command: uvicorn api_backend.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - hawaiian_network
+
+  # React Frontend
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../deployment/Dockerfile.frontend
+      args:
+        - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:8000}
+        - REACT_APP_WEBSOCKET_URL=${REACT_APP_WEBSOCKET_URL:-ws://localhost:8000}
+    container_name: hawaiian_frontend
+    environment:
+      - TZ=Pacific/Honolulu
+      - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:8000}
+      - REACT_APP_WEBSOCKET_URL=${REACT_APP_WEBSOCKET_URL:-ws://localhost:8000}
+      - REACT_APP_GOOGLE_ANALYTICS_ID=${REACT_APP_GOOGLE_ANALYTICS_ID}
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - hawaiian_network
+
+  # Nginx Reverse Proxy (Production)
+  nginx:
+    image: nginx:alpine
+    container_name: hawaiian_nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+      - nginx_logs:/var/log/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - hawaiian_network
+    profiles:
+      - production
+
+  # Backup Service
+  backup:
+    build:
+      context: .
+      dockerfile: Dockerfile.backup
+    container_name: hawaiian_backup
+    environment:
+      - TZ=Pacific/Honolulu
+      - DATABASE_URL=postgresql://${DB_USER:-lenilani}:${DB_PASSWORD:-aloha2024}@postgres:5432/hawaiian_lenilani
+      - BACKUP_S3_BUCKET=${BACKUP_S3_BUCKET}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - backup_data:/backup
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - production
+    networks:
+      - hawaiian_network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  nginx_logs:
+    driver: local
+  backup_data:
+    driver: local
+
+networks:
+  hawaiian_network:
+    driver: bridge
+    name: hawaiian_lenilani_network

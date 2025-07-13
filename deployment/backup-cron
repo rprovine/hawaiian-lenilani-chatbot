@@ -1,0 +1,14 @@
+# Hawaiian LeniLani Backup Cron Schedule
+# All times are in Hawaii Standard Time (HST)
+
+# PostgreSQL backup every 6 hours (2am, 8am, 2pm, 8pm HST)
+0 2,8,14,20 * * * /scripts/backup-postgres.sh >> /backup/logs/cron.log 2>&1
+
+# Redis backup every 4 hours
+0 */4 * * * /scripts/backup-redis.sh >> /backup/logs/cron.log 2>&1
+
+# Clean up old logs weekly (Sunday 3am HST)
+0 3 * * 0 find /backup/logs -name "*.log" -mtime +30 -delete >> /backup/logs/cron.log 2>&1
+
+# Health check ping every hour
+0 * * * * echo "Backup service healthy at $(date)" > /backup/logs/health.log
