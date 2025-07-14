@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Hawaiian Chatbot Widget</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f8ff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .debug-panel {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        .url-input {
+            margin: 20px 0;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #93e1d8;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #00afb9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0081a7;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .error {
+            background: #ffebee !important;
+            color: #c62828 !important;
+        }
+        #console-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Debug Hawaiian Chatbot Widget</h1>
+        
+        <div class="debug-panel">
+            <h3>Debug Information:</h3>
+            <div id="debug-info">
+                <div>Current API URL: <span id="current-api-url">Not set</span></div>
+                <div>Widget Status: <span id="widget-status">Not loaded</span></div>
+                <div>Console Errors: <span id="error-count">0</span></div>
+            </div>
+        </div>
+        
+        <div class="url-input">
+            <p>Enter your Render backend URL:</p>
+            <input type="text" id="backendUrl" placeholder="https://hawaiian-lenilani-chatbot.onrender.com" />
+            <button onclick="testBackend()">Test Backend</button>
+            <button onclick="loadWidget()">Load Widget</button>
+            <button onclick="clearConsole()">Clear Console</button>
+        </div>
+        
+        <div id="status" class="status" style="display: none;"></div>
+        
+        <h3>Console Output:</h3>
+        <div id="console-output"></div>
+        
+        <p><strong>Instructions:</strong></p>
+        <ol>
+            <li>Enter your Render backend URL above</li>
+            <li>Click "Test Backend" first to check if your API is working</li>
+            <li>If backend test passes, click "Load Widget"</li>
+            <li>Watch the console output for any errors</li>
+            <li>Look for the chat bubble in the bottom right corner</li>
+        </ol>
+    </div>
+
+    <script>
+        let errorCount = 0;
+        let originalConsole = {};
+        
+        // Capture console output
+        function setupConsoleCapture() {
+            const consoleOutput = document.getElementById('console-output');
+            
+            ['log', 'error', 'warn', 'info'].forEach(method => {
+                originalConsole[method] = console[method];
+                console[method] = function(...args) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    const message = args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' ');
+                    
+                    const line = `[${timestamp}] ${method.toUpperCase()}: ${message}\n`;
+                    consoleOutput.textContent += line;
+                    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                    
+                    if (method === 'error') {
+                        errorCount++;
+                        document.getElementById('error-count').textContent = errorCount;
+                    }
+                    
+                    // Call original console method
+                    originalConsole[method].apply(console, args);
+                };
+            });
+        }
+        
+        function clearConsole() {
+            document.getElementById('console-output').textContent = '';
+            errorCount = 0;
+            document.getElementById('error-count').textContent = '0';
+        }
+        
+        async function testBackend() {
+            const url = document.getElementById('backendUrl').value.trim();
+            const status = document.getElementById('status');
+            
+            if (!url) {
+                showStatus('Please enter your Render backend URL', true);
+                return;
+            }
+            
+            console.log('Testing backend at:', url);
+            
+            try {
+                // Test the health endpoint
+                const response = await fetch(`${url}/health`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    const health = await response.json();
+                    console.log('Backend health check:', health);
+                    showStatus('✅ Backend is working! Health check passed.', false);
+                    
+                    // Test logo endpoint
+                    const logoResponse = await fetch(`${url}/logo`, {
+                        method: 'GET',
+                        mode: 'cors'
+                    });
+                    
+                    if (logoResponse.ok) {
+                        console.log('Logo endpoint working');
+                        showStatus('✅ Backend and logo endpoint are working!', false);
+                    } else {
+                        console.warn('Logo endpoint failed:', logoResponse.status);
+                        showStatus('⚠️ Backend working but logo endpoint failed', false);
+                    }
+                } else {
+                    console.error('Backend health check failed:', response.status);
+                    showStatus('❌ Backend health check failed', true);
+                }
+            } catch (error) {
+                console.error('Backend test error:', error);
+                showStatus('❌ Failed to connect to backend', true);
+            }
+        }
+        
+        function loadWidget() {
+            const url = document.getElementById('backendUrl').value.trim();
+            
+            if (!url) {
+                showStatus('Please enter your Render backend URL', true);
+                return;
+            }
+            
+            console.log('Loading widget with API URL:', url);
+            
+            // Set the backend URL
+            window.LENILANI_CHATBOT_URL = url;
+            document.getElementById('current-api-url').textContent = url;
+            
+            // Load the widget
+            const script = document.createElement('script');
+            script.src = './public/hawaiian-widget.js';
+            script.onload = function() {
+                console.log('Widget script loaded successfully');
+                document.getElementById('widget-status').textContent = 'Loaded';
+                showStatus('✅ Widget loaded! Look for the chat bubble in the bottom right corner.', false);
+            };
+            script.onerror = function() {
+                console.error('Failed to load widget script');
+                document.getElementById('widget-status').textContent = 'Failed to load';
+                showStatus('❌ Failed to load widget script', true);
+            };
+            document.body.appendChild(script);
+        }
+        
+        function showStatus(message, isError) {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.textContent = message;
+            
+            if (isError) {
+                status.classList.add('error');
+            } else {
+                status.classList.remove('error');
+            }
+        }
+        
+        // Initialize console capture
+        setupConsoleCapture();
+        
+        // Allow Enter key to test backend
+        document.getElementById('backendUrl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testBackend();
+            }
+        });
+        
+        console.log('Debug page loaded. Ready to test your chatbot!');
+    </script>
+</body>
+</html>

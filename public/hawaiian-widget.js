@@ -454,7 +454,7 @@
                 <div class="lenilani-chat-header">
                     <div class="lenilani-header-content">
                         <div class="lenilani-logo">
-                            <img src="${API_URL}/logo" alt="LeniLani" />
+                            <img src="${API_URL}/logo" alt="LeniLani" onerror="this.style.display='none'" />
                         </div>
                         <div class="lenilani-chat-title">
                             <div class="name">LeniLani Consulting</div>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hawaiian Chatbot Widget Example</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌺 Hawaiian Chatbot Widget Demo</h1>
+        
+        <div class="info">
+            <h2>How to use this widget on your website:</h2>
+            <p>1. Copy the script tag below and paste it before the closing <code>&lt;/body&gt;</code> tag on your website</p>
+            <p>2. Replace <code>YOUR_RENDER_URL</code> with your actual Render backend URL (e.g., https://your-app-name.onrender.com)</p>
+            <p>3. The chat bubble will appear in the bottom right corner of your page</p>
+        </div>
+
+        <h3>Script to copy:</h3>
+        <pre><code>&lt;script&gt;
+    // Set your Render backend URL here
+    window.LENILANI_CHATBOT_URL = 'YOUR_RENDER_URL';
+&lt;/script&gt;
+&lt;script src="https://your-domain.com/hawaiian-widget.js"&gt;&lt;/script&gt;</code></pre>
+
+        <p>This page is already running the widget - look for the chat bubble in the bottom right corner!</p>
+    </div>
+
+    <!-- Widget Integration -->
+    <script>
+        // Set your Render backend URL here
+        // Replace with your actual Render URL like: https://hawaiian-chatbot-api.onrender.com
+        window.LENILANI_CHATBOT_URL = 'https://YOUR-APP-NAME.onrender.com';
+    </script>
+    <script src="./public/hawaiian-widget.js"></script>
+</body>
+</html>
