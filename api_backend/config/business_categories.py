@@ -27,7 +27,7 @@ HAWAIIAN_BUSINESS_CATEGORIES = {
             "Weather dependency"
         ],
         "typical_roi": "25-40% booking improvement",
-        "project_range": "$15,000-$50,000",
+        "project_range": "$8,000-$20,000",
         "success_story": "One Maui activity operator increased bookings 35% with our seasonal prediction AI",
         "hook": "Optimize for both kamaaina and malihini with AI that understands Hawaii tourism patterns"
     },
@@ -54,7 +54,7 @@ HAWAIIAN_BUSINESS_CATEGORIES = {
             "Competition with chains"
         ],
         "typical_roi": "30% waste reduction, 20% order increase",
-        "project_range": "$8,000-$25,000",
+        "project_range": "$5,000-$12,000",
         "success_story": "Local restaurant reduced food waste 30% and increased local customer orders 25%",
         "hook": "Serve your community better while competing with mainland chains"
     },
@@ -81,7 +81,7 @@ HAWAIIAN_BUSINESS_CATEGORIES = {
             "Sustainable practices"
         ],
         "typical_roi": "15-25% yield improvement",
-        "project_range": "$12,000-$35,000",
+        "project_range": "$6,000-$15,000",
         "success_story": "Big Island coffee farm improved yield 20% while reducing water usage 35%",
         "hook": "Malama 'aina with smart farming technology that respects traditional practices"
     },
@@ -108,7 +108,7 @@ HAWAIIAN_BUSINESS_CATEGORIES = {
             "Cultural authenticity"
         ],
         "typical_roi": "20% local customer retention increase",
-        "project_range": "$5,000-$18,000",
+        "project_range": "$2,000-$8,000",
         "success_story": "Hawaiian product store increased local customer retention 40% with cultural AI recommendations",
         "hook": "Beat Amazon with AI that understands local customers and Hawaiian culture"
     }
