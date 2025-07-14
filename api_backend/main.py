@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -225,8 +225,12 @@ async def health_check():
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(message: ChatMessage):
+async def chat(message: ChatMessage, request: Request):
     """Main chat endpoint for Hawaiian business conversations"""
+    # Log request details to debug double calls
+    request_id = request.headers.get("X-Request-ID", "no-id")
+    logger.info(f"Chat request received - Session: {message.session_id}, Request ID: {request_id}, Message: {message.message[:50]}")
+    
     try:
         # Get cultural context
         cultural_context = cultural_tone_manager.get_cultural_context()

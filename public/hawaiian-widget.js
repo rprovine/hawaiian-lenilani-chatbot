@@ -519,6 +519,13 @@
         </div>
     `;
     
+    // Global flag to prevent any double initialization
+    if (window.__LENILANI_WIDGET_INITIALIZED) {
+        console.log('Widget already initialized globally');
+        return;
+    }
+    window.__LENILANI_WIDGET_INITIALIZED = true;
+    
     // Initialize widget
     function initWidget() {
         // Prevent double initialization
@@ -677,19 +684,22 @@
             input.disabled = true;
             sendBtn.disabled = true;
             
-            console.log('Sending message to API:', message, 'Session:', conversationId);
+            const requestId = 'req-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            console.log('Sending message to API:', message, 'Session:', conversationId, 'Request ID:', requestId);
             
             try {
                 const response = await fetch(`${API_URL}/chat`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-Request-ID': requestId
                     },
                     mode: 'cors',
                     body: JSON.stringify({
                         message: message,
-                        session_id: conversationId
+                        session_id: conversationId,
+                        metadata: { request_id: requestId }
                     })
                 });
                 
