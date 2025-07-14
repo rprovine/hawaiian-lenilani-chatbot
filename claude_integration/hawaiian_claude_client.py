@@ -140,7 +140,15 @@ class HawaiianClaudeClient:
         if not self.api_key:
             raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
         
-        self.client = Anthropic(api_key=self.api_key)
+        try:
+            logger.info(f"Initializing Anthropic client with anthropic version: {Anthropic.__module__}")
+            self.client = Anthropic(api_key=self.api_key)
+            logger.info("Anthropic client initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize Anthropic client: {e}")
+            logger.error(f"Error type: {type(e)}")
+            raise e
+            
         self.cultural_context = CulturalContextManager()
         self.pidgin_processor = PidginResponseProcessor()
         self.aloha_injector = AlohaSpiritInjector()
