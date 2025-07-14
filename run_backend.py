@@ -15,8 +15,10 @@ sys.path.insert(0, project_root)
 api_backend_dir = os.path.join(project_root, 'api_backend')
 sys.path.insert(0, api_backend_dir)
 
-# Also add the parent of api_backend for absolute imports
-sys.path.insert(0, os.path.dirname(api_backend_dir))
+# Print Python path for debugging
+print(f"Project root: {project_root}")
+print(f"API backend dir: {api_backend_dir}")
+print(f"Python path: {sys.path[:3]}")
 
 # Run the server
 if __name__ == "__main__":

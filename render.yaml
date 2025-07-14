@@ -8,8 +8,6 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
-      - key: PYTHONPATH
-        value: /opt/render/project/src:/opt/render/project/src/api_backend
       - key: ANTHROPIC_API_KEY
         sync: false
       - key: LEAD_WEBHOOK_URL
