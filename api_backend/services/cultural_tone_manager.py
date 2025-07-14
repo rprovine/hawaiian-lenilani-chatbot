@@ -163,13 +163,13 @@ class CulturalToneManager:
         
         style_config = tone_settings.to_style_config()
         
-        # Add greeting if not present
-        if style_config["warm_greeting"] and not self._has_greeting(response):
-            greeting = cultural_context.greeting
-            if style_config["use_pidgin"]:
-                response = f"{greeting.pidgin_greeting} {response}"
-            else:
-                response = f"{greeting.hawaiian_greeting}! {response}"
+        # Skip adding greeting - Claude already handles this properly
+        # if style_config["warm_greeting"] and not self._has_greeting(response):
+        #     greeting = cultural_context.greeting
+        #     if style_config["use_pidgin"]:
+        #         response = f"{greeting.pidgin_greeting} {response}"
+        #     else:
+        #         response = f"{greeting.hawaiian_greeting}! {response}"
         
         # Add cultural value reference
         if style_config["cultural_depth"]:

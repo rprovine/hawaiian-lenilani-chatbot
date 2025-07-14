@@ -559,8 +559,8 @@
             sendBtn.disabled = false;
             input.focus();
             
-            // Send initial greeting
-            sendMessage('Aloha', true);
+            // Send initial greeting to get conversation started
+            sendMessage('Start conversation', true);
         }
         
         // Format time
