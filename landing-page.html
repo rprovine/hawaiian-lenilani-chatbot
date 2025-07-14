@@ -585,7 +585,7 @@
     </footer>
     
     <!-- Chat Prompt -->
-    <div class="chat-prompt" onclick="alert('Look for the chat bubble in the bottom right corner!')">
+    <div class="chat-prompt" onclick="openChat()">
         💬 Try our AI Chat →
     </div>
     
@@ -595,8 +595,9 @@
     </script>
     <script src="https://hawaiian-lenilani-chatbot.onrender.com/widget.js"></script>
     
-    <!-- Smooth Scrolling -->
+    <!-- Smooth Scrolling and Chat Button Handler -->
     <script>
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -604,6 +605,28 @@
                     behavior: 'smooth'
                 });
             });
+        });
+        
+        // Open chat widget function
+        function openChat() {
+            const chatBubble = document.getElementById('lenilani-bubble');
+            if (chatBubble) {
+                chatBubble.click();
+            } else {
+                // If widget not loaded yet, try again in a moment
+                setTimeout(() => {
+                    const bubble = document.getElementById('lenilani-bubble');
+                    if (bubble) bubble.click();
+                }, 500);
+            }
+        }
+        
+        // Update the chat prompt onclick
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatPrompt = document.querySelector('.chat-prompt');
+            if (chatPrompt) {
+                chatPrompt.onclick = openChat;
+            }
         });
     </script>
 </body>
