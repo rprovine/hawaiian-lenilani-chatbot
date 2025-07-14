@@ -19,15 +19,18 @@ sys.path.insert(0, api_backend_dir)
 # Run the server
 if __name__ == "__main__":
     import uvicorn
+    # Get port from environment variable (Railway provides this)
+    port = int(os.environ.get("PORT", 8000))
+    
     print("🌺 Starting Hawaiian LeniLani Chatbot API...")
-    print("🌴 Visit http://localhost:8000 to test the API")
-    print("📖 API docs available at http://localhost:8000/docs")
+    print(f"🌴 Visit http://localhost:{port} to test the API")
+    print(f"📖 API docs available at http://localhost:{port}/docs")
     print("🤙 Press Ctrl+C to stop the server")
     
     uvicorn.run(
         "api_backend.main:app",
         host="0.0.0.0",
-        port=8000,
+        port=port,
         reload=True,
         log_level="info"
     )

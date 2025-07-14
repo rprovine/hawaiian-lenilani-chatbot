@@ -16,8 +16,8 @@
     primaryColor: '#F4A261',
     buttonSize: 60,
     greeting: 'Aloha! 🌺 Need help with your Hawaiian business?',
-    apiUrl: 'https://api.lenilani.com',
-    embedUrl: 'https://chat.lenilani.com'
+    apiUrl: window.location.origin,
+    embedUrl: window.location.origin
   };
   
   // Merge configurations

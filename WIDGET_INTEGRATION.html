@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeniLani Chatbot Integration Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-left: 3px solid #F4A261;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        h1 { color: #264653; }
+        h2 { color: #2A9D8F; }
+        .highlight { 
+            background: #FFF3CD; 
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌺 LeniLani Chatbot Integration Guide</h1>
+    
+    <h2>Quick Integration (Copy & Paste)</h2>
+    <p>Add this code to your website, just before the <code class="highlight">&lt;/body&gt;</code> tag:</p>
+    
+    <div class="code-block">
+<pre>&lt;!-- LeniLani AI Chatbot --&gt;
+&lt;script&gt;
+  window.LeniLaniConfig = {
+    apiUrl: 'https://chatbot.hawaii.lenilani.com'
+  };
+&lt;/script&gt;
+&lt;script src="https://chatbot.hawaii.lenilani.com/widget.js" async&gt;&lt;/script&gt;
+&lt;!-- End LeniLani Chatbot --&gt;</pre>
+    </div>
+
+    <h2>WordPress Integration</h2>
+    <p>For WordPress sites, add to your theme's <code>footer.php</code> or use a plugin:</p>
+    
+    <div class="code-block">
+<pre>&lt;?php // Add to footer.php before &lt;/body&gt; ?&gt;
+&lt;script&gt;
+  window.LeniLaniConfig = {
+    apiUrl: 'https://chatbot.hawaii.lenilani.com',
+    position: 'bottom-right',
+    primaryColor: '#F4A261'
+  };
+&lt;/script&gt;
+&lt;script src="https://chatbot.hawaii.lenilani.com/widget.js" async&gt;&lt;/script&gt;</pre>
+    </div>
+
+    <h2>Advanced Configuration</h2>
+    <p>Customize the chatbot appearance and behavior:</p>
+    
+    <div class="code-block">
+<pre>&lt;script&gt;
+  window.LeniLaniConfig = {
+    apiUrl: 'https://chatbot.hawaii.lenilani.com',
+    position: 'bottom-left',  // or 'bottom-right'
+    primaryColor: '#F4A261',   // Your brand color
+    buttonSize: 70,            // Size in pixels
+    greeting: 'Aloha! How can we help your business?',
+    owner: {
+      name: 'Reno Provine',
+      email: 'reno@lenilani.com',
+      phone: '808-766-1164'
+    }
+  };
+&lt;/script&gt;
+&lt;script src="https://chatbot.hawaii.lenilani.com/widget.js" async&gt;&lt;/script&gt;</pre>
+    </div>
+
+    <h2>Testing Your Integration</h2>
+    <ol>
+        <li>Add the code to your website</li>
+        <li>Clear your browser cache</li>
+        <li>Visit your website</li>
+        <li>Look for the chat bubble in the bottom corner</li>
+        <li>Click to open and test the chatbot</li>
+    </ol>
+
+    <h2>Troubleshooting</h2>
+    <ul>
+        <li><strong>Chat bubble not appearing:</strong> Check browser console for errors (F12)</li>
+        <li><strong>CORS errors:</strong> Contact support to add your domain to allowed origins</li>
+        <li><strong>Widget loads but won't open:</strong> Clear cache and cookies</li>
+    </ul>
+
+    <h2>Need Help?</h2>
+    <p>Contact Reno Provine:</p>
+    <ul>
+        <li>📧 Email: <a href="mailto:reno@lenilani.com">reno@lenilani.com</a></li>
+        <li>📱 Phone: <a href="tel:808-766-1164">808-766-1164</a></li>
+    </ul>
+
+    <hr style="margin-top: 40px;">
+    
+    <h2>🧪 Live Demo</h2>
+    <p>The chatbot is active on this page! Look for the chat bubble in the bottom-right corner.</p>
+
+    <!-- ACTUAL WIDGET CODE -->
+    <script>
+      window.LeniLaniConfig = {
+        apiUrl: 'http://localhost:8000'  // Change to your deployed URL
+      };
+    </script>
+    <script src="http://localhost:3000/widget.js" async></script>
+</body>
+</html>
