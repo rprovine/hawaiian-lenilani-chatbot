@@ -2,8 +2,8 @@ import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
 import { ChatResponse, BusinessQualification, HawaiianBusinessResponse } from '../types/chat';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
-const WS_URL = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8001';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const WS_URL = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8000';
 
 class ChatService {
   private apiClient = axios.create({
