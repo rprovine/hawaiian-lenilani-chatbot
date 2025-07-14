@@ -204,7 +204,8 @@
                 showStatus('✅ Test widget loaded! Click the 🌺 in the bottom right to test chat.', false);
             } catch (error) {
                 console.error('Widget loading error:', error);
-                showStatus('❌ Failed to load widget: ' + error.message, true);
+                const errorMsg = error.message || error.toString() || 'Unknown error';
+                showStatus('❌ Failed to load widget: ' + errorMsg, true);
             }
         }
         

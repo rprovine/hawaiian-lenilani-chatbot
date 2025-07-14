@@ -27,6 +27,7 @@ pytz==2024.2
 python-dotenv==1.0.1
 httpx==0.28.1
 tenacity==9.0.0
+requests==2.32.3
 
 # Testing (commented out for production)
 # pytest==8.3.4
