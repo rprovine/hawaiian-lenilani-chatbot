@@ -208,11 +208,12 @@ async def chat(message: ChatMessage):
             metadata=message.metadata
         )
         
-        # Enhance with cultural tone
-        enhanced_response = cultural_tone_manager.enhance_response(
-            response["response"],
-            cultural_context
-        )
+        # Skip cultural tone enhancement - Claude handles this
+        # enhanced_response = cultural_tone_manager.enhance_response(
+        #     response["response"],
+        #     cultural_context
+        # )
+        enhanced_response = response["response"]
         
         # Add suggestions based on conversation state
         suggestions = conversation_router.get_suggestions(message.message)
@@ -380,11 +381,12 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 metadata=data.get("metadata")
             )
             
-            # Enhance with cultural tone
-            enhanced_response = cultural_tone_manager.enhance_response(
-                response["response"],
-                cultural_tone_manager.get_cultural_context()
-            )
+            # Skip cultural tone enhancement - Claude handles this
+            # enhanced_response = cultural_tone_manager.enhance_response(
+            #     response["response"],
+            #     cultural_tone_manager.get_cultural_context()
+            # )
+            enhanced_response = response["response"]
             
             # Send response
             response_msg = {
