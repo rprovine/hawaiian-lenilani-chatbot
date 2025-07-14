@@ -266,18 +266,25 @@
         
         let isOpen = false;
         let conversationId = null;
+        let isStartingConversation = false;
         
         // Toggle chat window
         function toggleChat() {
             isOpen = !isOpen;
             window.style.display = isOpen ? 'flex' : 'none';
-            if (isOpen && !conversationId) {
+            if (isOpen && !conversationId && !isStartingConversation) {
                 startConversation();
             }
         }
         
         // Start conversation
         async function startConversation() {
+            if (isStartingConversation || conversationId) {
+                console.log('Conversation already starting or started');
+                return;
+            }
+            isStartingConversation = true;
+            
             try {
                 conversationId = 'web-' + Date.now();
                 
@@ -312,6 +319,9 @@
                 console.error('API URL:', API_URL);
                 console.error('Full error:', error.message);
                 addMessage('Sorry, I\'m having trouble connecting. Please try again later.', 'bot');
+                conversationId = null; // Reset so user can try again
+            } finally {
+                isStartingConversation = false;
             }
         }
         
