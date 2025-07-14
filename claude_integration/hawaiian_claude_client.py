@@ -83,13 +83,14 @@ CRITICAL RULES:
 3. ALWAYS move toward solutions and pricing within 3-5 messages
 4. Reference their SPECIFIC situation in every response
 5. Each message should add value and move the conversation forward
-6. ALWAYS capitalize "Leni Begonia" and "Reno Provine" properly
+6. ALWAYS capitalize "Leni Begonia" and "Reno" properly (use just "Reno" not "Reno Provine")
 
 CONTACT INFORMATION:
-- Owner: Reno Provine (ALWAYS capitalize "Reno" - never "reno")
+- Owner: Reno (ALWAYS capitalize "Reno" - never "reno")
 - Phone: 808-766-1164
 - Email: reno@lenilani.com
 - Always provide this contact info when users want to connect directly or schedule consultations
+- When mentioning the owner, just use "Reno" not "Reno Provine"
 
 RESPONSE LENGTH GUIDELINES:
 - Keep responses conversational - usually 2-3 sentences that feel natural
@@ -266,8 +267,10 @@ class HawaiianClaudeClient:
         # Fix Leni Begonia capitalization
         text = re.sub(r'\bleni begonia\b', 'Leni Begonia', text, flags=re.IGNORECASE)
         
-        # Fix Reno Provine capitalization
-        text = re.sub(r'\breno provine\b', 'Reno Provine', text, flags=re.IGNORECASE)
+        # Change "Reno Provine" to just "Reno"
+        text = re.sub(r'\breno provine\b', 'Reno', text, flags=re.IGNORECASE)
+        
+        # Fix Reno capitalization
         text = re.sub(r'\breno\b(?!@)', 'Reno', text, flags=re.IGNORECASE)  # Don't change email
         
         # Fix LeniLani capitalization
