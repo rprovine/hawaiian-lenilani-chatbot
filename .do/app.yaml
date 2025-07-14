@@ -1,0 +1,14 @@
+name: hawaiian-lenilani-chatbot
+region: sfo3
+services:
+- environment_slug: python
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: rprovine/hawaiian-lenilani-chatbot
+  http_port: 8000
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  name: web
+  run_command: python run_backend.py
+  source_dir: /
