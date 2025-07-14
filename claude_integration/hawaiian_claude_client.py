@@ -180,11 +180,17 @@ class HawaiianClaudeClient:
             if cultural_mode == "authentic":
                 response_text = self.pidgin_processor.enhance_response(response_text)
             
-            # Inject aloha spirit
-            response_text = self.aloha_injector.inject_aloha(
-                response_text,
-                time_context=time_context
-            )
+            # Inject aloha spirit only if appropriate
+            # Skip injection if we've already greeted and Claude included a greeting
+            should_inject = not (business_context.get('has_greeted', False) and 
+                               any(greeting in response_text.lower() for greeting in ['aloha', 'morning', 'afternoon', 'evening']))
+            
+            if should_inject:
+                response_text = self.aloha_injector.inject_aloha(
+                    response_text,
+                    time_context=time_context,
+                    conversation_stage="general" if business_context.get('has_greeted', False) else "greeting"
+                )
             
             return {
                 "response": response_text,
@@ -239,10 +245,11 @@ class HawaiianClaudeClient:
         """Fallback response when Claude API fails"""
         time_context = self.get_current_hawaii_time()
         
+        # Simpler, more natural fallback messages
         fallback_messages = [
-            f"{time_context['greeting']}! Ho, looks like we stay having some technical difficulties. No worries though! You can reach Reno directly at reno@lenilani.com or call 808-766-1164.",
-            f"Shoots! Our AI stay taking one quick break. But no worries, we still here for help! Email Reno at reno@lenilani.com or call 808-766-1164 for talk story session.",
-            f"Eh, sorry bout dat! Our system stay little bit slow right now. Try again in couple minutes or contact Reno directly at reno@lenilani.com (808-766-1164) - we always here for da local business community!"
+            "Ho, having technical issues! Try again or call Reno at 808-766-1164.",
+            "Shoots, system acting up. Email reno@lenilani.com or try again in a bit!",
+            "Eh sorry, small problem. Contact Reno: 808-766-1164 or reno@lenilani.com"
         ]
         
         import random
@@ -296,18 +303,19 @@ class HawaiianClaudeClient:
         """Generate a culturally appropriate greeting"""
         time_context = self.get_current_hawaii_time()
         
+        # Simple, natural greetings without the canned phrases
         greeting_templates = {
             "morning": [
-                f"{time_context['greeting']}! 🌅 Beautiful morning, yeah? How can we help your business today?",
-                f"{time_context['greeting']}! Hope you getting one good start to da day! What can we do for you?",
+                f"{time_context['greeting']}! 🌅 I help Hawaiian businesses with AI and tech. What kind business you running?",
+                f"{time_context['greeting']}! Nice morning yeah? What brings you by?",
             ],
             "afternoon": [
-                f"{time_context['greeting']}! ☀️ Perfect time for talk story about your business! How you stay?",
-                f"{time_context['greeting']}! Hot one today, yeah? Let's talk about how we can help your business stay cool with technology!",
+                f"{time_context['greeting']}! ☀️ I'm here for help local businesses with technology. How you stay?",
+                f"{time_context['greeting']}! What can I help you with today?",
             ],
             "evening": [
-                f"{time_context['greeting']}! 🌙 Mahalo for reaching out! Even after hours, we stay thinking about helping local businesses.",
-                f"{time_context['greeting']}! Perfect time for plan tomorrow's success! What's on your mind?",
+                f"{time_context['greeting']}! 🌙 Working late? I help Hawaiian businesses with AI. What you need?",
+                f"{time_context['greeting']}! Still going strong! What kind help you looking for?",
             ]
         }
         

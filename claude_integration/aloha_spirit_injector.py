@@ -16,19 +16,19 @@ class AlohaSpiritInjector:
         self.aloha_expressions = {
             "greeting": {
                 "morning": [
-                    "E komo mai (Welcome)! 🌺",
-                    "Aloha kakahiaka! Beautiful morning for business! 🌅",
-                    "Good morning! Da sun stay shining on new opportunities! ☀️"
+                    "E komo mai! 🌺",
+                    "Aloha kakahiaka! 🌅",
+                    "Morning! ☀️"
                 ],
                 "afternoon": [
-                    "Aloha awakea! Perfect time for talk story! ☀️",
-                    "Afternoon! Hope your day stay going good! 🌴",
-                    "Aloha! Great time for make some progress! 💪"
+                    "Aloha awakea! ☀️",
+                    "Afternoon! 🌴",
+                    "Aloha! 💪"
                 ],
                 "evening": [
-                    "Aloha ahiahi! Even in da evening, we stay here for you! 🌙",
-                    "Evening time! Perfect for plan tomorrow's success! 🌟",
-                    "Aloha! Wrapping up da day or just getting started? 🌅"
+                    "Aloha ahiahi! 🌙",
+                    "Evening! Still going? 🌟",
+                    "Aloha! Working late? 🌅"
                 ]
             },
             "encouragement": [
