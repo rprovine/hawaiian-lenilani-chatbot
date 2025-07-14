@@ -11,10 +11,12 @@ load_dotenv()
 project_root = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, project_root)
 
-# Don't change directory, run from project root
-# Add api_backend to Python path
+# Add api_backend to Python path so imports work correctly
 api_backend_dir = os.path.join(project_root, 'api_backend')
 sys.path.insert(0, api_backend_dir)
+
+# Also add the parent of api_backend for absolute imports
+sys.path.insert(0, os.path.dirname(api_backend_dir))
 
 # Run the server
 if __name__ == "__main__":
