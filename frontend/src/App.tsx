@@ -25,7 +25,9 @@ function App() {
               <Button 
                 variant="contained" 
                 size="large"
-                onClick={() => window.LeniLaniChatbot?.open()}
+                href="https://hawaii.lenilani.com/#cta"
+                target="_blank"
+                rel="noopener noreferrer"
                 sx={{ 
                   mt: 2,
                   px: 4,
@@ -129,7 +131,9 @@ function App() {
                 <Button 
                   variant="contained" 
                   size="large"
-                  onClick={() => window.LeniLaniChatbot?.open()}
+                  href="https://hawaii.lenilani.com/#cta"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   sx={{ 
                     px: 4,
                     py: 1.5,
@@ -139,7 +143,7 @@ function App() {
                     }
                   }}
                 >
-                  Chat Now 💬
+                  Contact Now 💬
                 </Button>
                 <Button 
                   variant="outlined" 
