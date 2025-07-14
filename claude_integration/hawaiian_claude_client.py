@@ -298,9 +298,9 @@ class HawaiianClaudeClient:
         
         # Simpler, more natural fallback messages
         fallback_messages = [
-            "Ho, having technical issues! Try again or call Reno at 808-766-1164.",
-            "Shoots, system acting up. Email reno@lenilani.com or try again in a bit!",
-            "Eh sorry, small problem. Contact Reno: 808-766-1164 or reno@lenilani.com"
+            "Aloha! Our AI is taking a quick break. Please call Reno directly at 808-766-1164 or email reno@lenilani.com - he's ready to help with your Hawaiian business needs!",
+            "Ho brah, system stay busy right now! For immediate help, text or call Reno at 808-766-1164. Or shoot him an email: reno@lenilani.com",
+            "Shoots! AI stay overloaded. No worries - Reno can help you directly! Call: 808-766-1164 or Email: reno@lenilani.com"
         ]
         
         import random

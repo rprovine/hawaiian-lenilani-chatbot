@@ -132,7 +132,9 @@ class HawaiianConversationRouter:
             
             # Check if lead information is available and capture it
             lead_info = self._extract_lead_info(message, conversation_history, session)
+            logger.info(f"Lead extraction result: {lead_info}")
             if lead_info and self.lead_capture:
+                logger.info(f"Capturing lead with info: {lead_info}")
                 asyncio.create_task(self._capture_lead(lead_info, session))
             
             return {
@@ -297,11 +299,13 @@ class HawaiianConversationRouter:
     async def _capture_lead(self, lead_info: Dict, session: Dict):
         """Capture and send lead information"""
         try:
+            logger.info(f"Starting lead capture for: {lead_info}")
             # Generate conversation summary
             conversation_summary = self._generate_conversation_summary(session)
             
             # Calculate qualification score
             qualification_score = self._calculate_qualification_score(lead_info, session)
+            logger.info(f"Lead qualification score: {qualification_score}")
             
             # Capture the lead
             result = await self.lead_capture.capture_lead(
@@ -342,7 +346,7 @@ class HawaiianConversationRouter:
             # Get last few user messages
             user_messages = [msg["content"] for msg in conversation_history if msg["role"] == "user"][-3:]
             if user_messages:
-                summary_parts.append(f"Recent topics: {', '.join(user_messages[:50] + '...' if len(msg) > 50 else msg for msg in user_messages)}")
+                summary_parts.append(f"Recent topics: {', '.join(msg[:50] + '...' if len(msg) > 50 else msg for msg in user_messages)}")
         
         return " | ".join(summary_parts)
     

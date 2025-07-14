@@ -1,0 +1,42 @@
+{
+  "name": "Hawaiian LeniLani Chatbot",
+  "description": "AI chatbot for Hawaiian businesses with cultural integration",
+  "repository": "https://github.com/YOUR_USERNAME/hawaiian-lenilani-chatbot",
+  "logo": "https://raw.githubusercontent.com/YOUR_USERNAME/hawaiian-lenilani-chatbot/main/frontend/public/images/lenilani-logo.webp",
+  "keywords": ["python", "chatbot", "ai", "hawaii", "claude"],
+  "env": {
+    "ANTHROPIC_API_KEY": {
+      "description": "Your Claude API key from Anthropic",
+      "required": true
+    },
+    "LEAD_WEBHOOK_URL": {
+      "description": "Webhook URL for lead capture (use webhook.site for testing)",
+      "value": "https://webhook.site/",
+      "required": false
+    },
+    "LEAD_EMAIL": {
+      "description": "Email to receive lead notifications",
+      "value": "reno@lenilani.com",
+      "required": false
+    },
+    "PORT": {
+      "description": "Port for the backend service",
+      "value": "8000",
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "echo 'Deployment complete! Visit your app URL to test the chatbot.'"
+  }
+}

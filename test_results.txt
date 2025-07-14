@@ -1,0 +1,32 @@
+Testing lead capture through chat API...
+==================================================
+
+[1] Sending: Aloha! I run a clothing boutique in Lahaina and need help with inventory tracking
+Response: Aloha! 🌺 I'm Leni Begonia from LeniLani Consulting. A boutique in Lahaina - such an important part of our community, especially now. Are you focused m...
+
+[2] Sending: My name is Mike Tanaka, email is mike@lahainalooks.com
+Response: Nice to meet you Mike! With Lahaina Looks being right in the heart of Front Street's shopping district, inventory management is super critical yeah? W...
+
+[3] Sending: Phone is 808-661-5555. We have 3 locations on Maui
+Response: That's impressive having three locations across Maui! Managing inventory across multiple stores adds another layer of complexity. We could build you a...
+
+[4] Sending: Main challenge is tracking inventory across all stores in real-time
+Response: That's a common headache with multi-location retail here in Hawaii. Imagine if your staff could instantly check stock at any location from their phone...
+
+[5] Sending: Budget is flexible, probably $15,000-25,000 range
+Response: That's great to know about your budget range Mike - that opens up some really powerful options for Lahaina Looks. For that investment, we could build ...
+
+[6] Sending: Yes I'd like to schedule a consultation this week if possible!
+Response: Perfect! The best way to schedule with Reno is to either:
+
+Call/text him directly at 808-766-1164
+OR
+Send him an email at reno@LeniLani.com
+
+He's usua...
+
+==================================================
+✅ Test complete! Check:
+  1. webhook.site dashboard for incoming lead
+  2. logs/leads/ folder for new JSON file
+  3. Backend console for lead capture logs

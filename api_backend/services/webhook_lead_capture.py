@@ -18,6 +18,8 @@ class WebhookLeadCapture:
     def __init__(self):
         # Webhook URL from environment or use RequestBin for testing
         self.webhook_url = os.getenv("LEAD_WEBHOOK_URL", "")
+        logger.info(f"Webhook URL from env: {self.webhook_url[:50]}..." if self.webhook_url else "No webhook URL found")
+        
         self.webhook_headers = {
             "Content-Type": "application/json",
             "User-Agent": "LeniLani-Chatbot/1.0"

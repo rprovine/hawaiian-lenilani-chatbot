@@ -1,24 +1,152 @@
 # Hawaiian LeniLani Chatbot Deployment Guide
 
+## 📋 Prerequisites
+
+- GitHub account with the repository
+- Node.js 18+ and Python 3.9+ installed
+- Claude API key from Anthropic
+- Domain name (optional but recommended)
+
+## 🚀 Deployment Options Overview
+
+1. **Vercel + Railway** - Best for production (automatic deployments)
+2. **Railway Only** - Simplest all-in-one solution
+3. **VPS (DigitalOcean/AWS)** - Most control and customization
+4. **Render** - Good free tier option
+
 ## 🚀 Deploying to Production
 
-### Option 1: Deploy to Vercel (Recommended for Frontend)
+## 🎯 Step-by-Step Deployment from GitHub
 
-1. **Frontend Deployment**:
+### Step 1: Prepare Your GitHub Repository
+
+1. **Fork or Clone the Repository**
    ```bash
-   cd frontend
-   npm run build
-   vercel --prod
+   git clone https://github.com/YOUR_USERNAME/hawaiian-lenilani-chatbot.git
+   cd hawaiian-lenilani-chatbot
    ```
 
-2. **Backend Deployment** (to Railway, Render, or DigitalOcean):
+2. **Create Environment File**
    ```bash
-   cd api_backend
-   # Update requirements.txt if needed
-   pip freeze > requirements.txt
+   cp .env.example .env
+   # Edit .env with your actual values
    ```
 
-### Option 2: Deploy Everything to a VPS (DigitalOcean, AWS, etc.)
+3. **Push to Your GitHub**
+   ```bash
+   git add .
+   git commit -m "Initial deployment setup"
+   git push origin main
+   ```
+
+### Option 1: Vercel (Frontend) + Railway (Backend)
+
+#### Deploy Frontend to Vercel
+
+1. **Connect GitHub to Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Click "Add New" → "Project"
+   - Import your GitHub repository
+   - Select the `hawaiian-lenilani-chatbot` repo
+
+2. **Configure Build Settings**
+   ```
+   Framework Preset: Create React App
+   Root Directory: frontend
+   Build Command: npm run build
+   Output Directory: build
+   ```
+
+3. **Add Environment Variable**
+   ```
+   REACT_APP_API_URL=https://your-backend.railway.app
+   ```
+   (You'll update this after deploying backend)
+
+4. **Deploy**
+   - Click "Deploy"
+   - Note your deployment URL (e.g., `https://your-app.vercel.app`)
+
+#### Deploy Backend to Railway
+
+1. **Connect GitHub to Railway**
+   - Go to [railway.app](https://railway.app)
+   - Click "New Project" → "Deploy from GitHub repo"
+   - Select your repository
+
+2. **Configure Service**
+   - Railway will auto-detect Python
+   - Add these environment variables:
+   ```
+   ANTHROPIC_API_KEY=your-claude-api-key
+   LEAD_WEBHOOK_URL=your-webhook-url
+   CORS_ORIGINS=https://your-app.vercel.app
+   PORT=8000
+   ```
+
+3. **Deploy**
+   - Click "Deploy"
+   - Generate a domain (e.g., `https://your-backend.railway.app`)
+
+4. **Update Vercel Frontend**
+   - Go back to Vercel dashboard
+   - Update `REACT_APP_API_URL` with your Railway backend URL
+   - Redeploy
+
+### Option 2: Deploy to Railway (All-in-One)
+
+1. **Create Railway Project**
+   - Go to [railway.app](https://railway.app)
+   - Create new project from GitHub
+
+2. **Add Two Services**
+   
+   **Backend Service:**
+   - Click "+ New" → "GitHub Repo"
+   - Select your repo
+   - Add start command: `python run_backend.py`
+   - Add all backend environment variables
+
+   **Frontend Service:**
+   - Click "+ New" → "GitHub Repo" again
+   - Select same repo
+   - Set root directory: `frontend`
+   - Add build command: `npm run build`
+   - Add start command: `serve -s build -l $PORT`
+   - Add env var: `REACT_APP_API_URL=https://backend-service.railway.internal`
+
+3. **Generate Domains**
+   - Click on each service → Settings → Generate Domain
+   - Update CORS_ORIGINS with frontend domain
+
+### Option 3: Deploy to Render (Free Tier)
+
+1. **Deploy Backend**
+   - Go to [render.com](https://render.com)
+   - New → Web Service → Connect GitHub
+   - Configure:
+     ```
+     Name: lenilani-chatbot-api
+     Environment: Python 3
+     Build Command: pip install -r requirements.txt
+     Start Command: python run_backend.py
+     ```
+   - Add environment variables
+   - Deploy (note the URL)
+
+2. **Deploy Frontend**
+   - New → Static Site → Connect GitHub
+   - Configure:
+     ```
+     Name: lenilani-chatbot
+     Root Directory: frontend
+     Build Command: npm run build
+     Publish Directory: frontend/build
+     ```
+   - Add env var: `REACT_APP_API_URL=your-backend-url`
+   - Deploy
+
+### Option 4: Deploy Everything to a VPS (DigitalOcean, AWS, etc.)
 
 1. **Set up your server**:
    ```bash

@@ -26,13 +26,19 @@ To establish LeniLani as the premier AI consultant for Hawaiian businesses by de
 
 ## 🚀 Quick Start
 
+### 🌟 Deploy in 10 Minutes!
+
+See our deployment guides:
+- **[RAILWAY_DEPLOY.md](./RAILWAY_DEPLOY.md)** - Easiest option, deploy in 10 minutes
+- **[GITHUB_DEPLOYMENT.md](./GITHUB_DEPLOYMENT.md)** - Complete GitHub to production guide
+- **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - All deployment options detailed
+
 ### Prerequisites
 - Python 3.9+
 - Node.js 18+
-- PostgreSQL 14+
-- Redis 6+
+- Claude API key from Anthropic
 
-### Installation
+### Local Development
 
 ```bash
 # Clone the repository
