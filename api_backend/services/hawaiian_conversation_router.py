@@ -7,6 +7,7 @@ import json
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 import asyncio
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -57,11 +58,10 @@ class HawaiianConversationRouter:
     ) -> Dict[str, Any]:
         """Route to Claude for cultural and business responses"""
         try:
-            # Import Claude client (avoid circular import)
-            import sys
-            import os
+            # Import Claude client and business categories (avoid circular import)
             sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
             from claude_integration.hawaiian_claude_client import HawaiianClaudeClient
+            from api_backend.config.business_categories import HAWAIIAN_BUSINESS_CATEGORIES, CATEGORY_QUICK_SELECT, ISLAND_CATEGORY_FOCUS
             
             claude_client = HawaiianClaudeClient()
             
@@ -76,6 +76,19 @@ class HawaiianConversationRouter:
             # Add greeting status to context
             business_context['has_greeted'] = session.get('has_greeted', False)
             business_context['message_count'] = len(conversation_history) // 2  # Rough count of exchanges
+            
+            # Add business categories context
+            business_context['categories'] = HAWAIIAN_BUSINESS_CATEGORIES
+            business_context['quick_select'] = CATEGORY_QUICK_SELECT
+            
+            # Extract business context from message
+            extracted_context = self._extract_business_context(message, business_context)
+            business_context.update(extracted_context)
+            
+            # Add island-specific category focus if island is known
+            if business_context.get('island'):
+                island_key = business_context['island'].lower().replace(' ', '_')
+                business_context['island_focus'] = ISLAND_CATEGORY_FOCUS.get(island_key, [])
             
             # Generate Claude response
             claude_response = await asyncio.to_thread(
@@ -146,6 +159,85 @@ class HawaiianConversationRouter:
             "source": "fallback",
             "error": True
         }
+    
+    def _extract_business_context(self, message: str, existing_context: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract business context from message"""
+        context = {}
+        message_lower = message.lower()
+        
+        # Extract island mentions
+        islands = ["oahu", "maui", "big island", "hawaii island", "kauai", "molokai", "lanai"]
+        for island in islands:
+            if island in message_lower:
+                context["island"] = island.title()
+                break
+        
+        # Import categories if not already imported
+        try:
+            from api_backend.config.business_categories import HAWAIIAN_BUSINESS_CATEGORIES
+        except:
+            return context
+            
+        # Extract business category mentions
+        for category_key, category_info in HAWAIIAN_BUSINESS_CATEGORIES.items():
+            # Check main category keywords
+            if any(keyword in message_lower for keyword in category_info['display_name'].lower().split()):
+                context['business_category'] = category_key
+                context['category_info'] = category_info
+                break
+            
+            # Check subcategories
+            for subcategory in category_info['subcategories']:
+                if subcategory.lower() in message_lower:
+                    context['business_category'] = category_key
+                    context['category_info'] = category_info
+                    context['subcategory'] = subcategory
+                    break
+                    
+        # Extract specific business type within categories
+        business_types = [
+            "restaurant", "food truck", "cafe", "coffee shop",
+            "hotel", "resort", "vacation rental", "tour",
+            "farm", "agriculture", "produce", "coffee farm",
+            "retail", "store", "shop", "boutique",
+            "real estate", "property", "development",
+            "healthcare", "medical", "wellness", "clinic",
+            "technology", "software", "it services",
+            "construction", "contractor", "building",
+            "professional services", "consulting", "legal", "accounting"
+        ]
+        
+        for btype in business_types:
+            if btype in message_lower:
+                context["business_type"] = btype
+                # Map to category if not already set
+                if 'business_category' not in context:
+                    if btype in ["restaurant", "food truck", "cafe", "coffee shop"]:
+                        context['business_category'] = 'restaurants_food'
+                        context['category_info'] = HAWAIIAN_BUSINESS_CATEGORIES.get('restaurants_food', {})
+                    elif btype in ["hotel", "resort", "vacation rental", "tour"]:
+                        context['business_category'] = 'tourism_hospitality'
+                        context['category_info'] = HAWAIIAN_BUSINESS_CATEGORIES.get('tourism_hospitality', {})
+                    elif btype in ["farm", "agriculture", "produce", "coffee farm"]:
+                        context['business_category'] = 'agriculture_farming'
+                        context['category_info'] = HAWAIIAN_BUSINESS_CATEGORIES.get('agriculture_farming', {})
+                    elif btype in ["retail", "store", "shop", "boutique"]:
+                        context['business_category'] = 'local_retail'
+                        context['category_info'] = HAWAIIAN_BUSINESS_CATEGORIES.get('local_retail', {})
+                break
+                
+        # Extract challenges
+        challenge_keywords = [
+            "struggle", "problem", "issue", "challenge", "difficult",
+            "help with", "need", "looking for", "want to", "trying to"
+        ]
+        
+        for keyword in challenge_keywords:
+            if keyword in message_lower:
+                context["has_challenge"] = True
+                break
+                
+        return context
     
     def get_suggestions(self, user_message: str) -> List[str]:
         """Get contextual suggestions for user"""

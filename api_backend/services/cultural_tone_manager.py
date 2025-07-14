@@ -7,7 +7,7 @@ from datetime import datetime
 import random
 import pytz
 
-from ..models.cultural_context import (
+from models.cultural_context import (
     CulturalContext, CommunicationStyle, HawaiianValue,
     TimeOfDay, CulturalGreeting, PidginPhrase, CulturalTone
 )

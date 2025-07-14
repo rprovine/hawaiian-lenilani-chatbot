@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
 import random
 
-from ..models.hawaiian_business import (
+from models.hawaiian_business import (
     Island, BusinessType, ServiceType, BusinessInquiry,
     ServiceRecommendation, IslandInsight, BusinessChallenge
 )
