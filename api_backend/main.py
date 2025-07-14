@@ -230,12 +230,11 @@ async def chat(message: ChatMessage):
             metadata=message.metadata
         )
         
-        # Skip cultural tone enhancement - Claude handles this
-        # enhanced_response = cultural_tone_manager.enhance_response(
-        #     response["response"],
-        #     cultural_context
-        # )
-        enhanced_response = response["response"]
+        # Add cultural tone enhancement for more pidgin flavor
+        enhanced_response = cultural_tone_manager.enhance_response(
+            response["response"],
+            cultural_context
+        )
         
         # Add suggestions based on conversation state
         suggestions = conversation_router.get_suggestions(message.message)
