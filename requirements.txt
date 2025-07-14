@@ -7,18 +7,18 @@ uvicorn==0.32.1
 pydantic==2.10.3
 python-multipart==0.0.12
 
-# Database
-asyncpg==0.30.0
-redis==5.2.0
-sqlalchemy==2.0.36
-alembic==1.14.0
+# Database (commented out - not needed for basic deployment)
+# asyncpg==0.30.0
+# redis==5.2.0
+# sqlalchemy==2.0.36
+# alembic==1.14.0
 
-# Integrations
-hubspot-api-client==9.2.2
-google-api-python-client==2.155.0
-google-auth==2.36.0
-google-auth-oauthlib==1.2.1
-google-auth-httplib2==0.2.0
+# Integrations (commented out for minimal deployment)
+# hubspot-api-client==9.2.2
+# google-api-python-client==2.155.0
+# google-auth==2.36.0
+# google-auth-oauthlib==1.2.1
+# google-auth-httplib2==0.2.0
 
 # Utilities
 python-dateutil==2.9.0.post0
@@ -27,13 +27,13 @@ python-dotenv==1.0.1
 httpx==0.28.1
 tenacity==9.0.0
 
-# Testing
-pytest==8.3.4
-pytest-asyncio==0.25.0
-pytest-cov==6.0.0
+# Testing (commented out for production)
+# pytest==8.3.4
+# pytest-asyncio==0.25.0
+# pytest-cov==6.0.0
 
-# Development
-black==24.10.0
-flake8==7.1.1
-isort==5.13.2
-mypy==1.13.0
+# Development (commented out for production)
+# black==24.10.0
+# flake8==7.1.1
+# isort==5.13.2
+# mypy==1.13.0
