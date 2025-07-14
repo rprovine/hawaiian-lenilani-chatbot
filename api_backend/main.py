@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr
 import pytz
@@ -191,18 +191,151 @@ manager = ConnectionManager()
 
 
 # API Endpoints
-@app.get("/", response_model=HealthCheckResponse)
-async def root():
-    """Root endpoint with Hawaiian greeting"""
-    current_time = timezone_handler.get_current_hawaii_time()
-    greeting = timezone_handler.get_time_based_greeting()
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    """Serve landing page with chatbot"""
+    # Check if request wants JSON (API call)
+    if request.headers.get("accept", "").startswith("application/json"):
+        current_time = timezone_handler.get_current_hawaii_time()
+        greeting = timezone_handler.get_time_based_greeting()
+        return JSONResponse(content={
+            "status": "healthy",
+            "message": "Hawaiian LeniLani Chatbot API is running! 🌺",
+            "hawaii_time": current_time["formatted"],
+            "greeting": greeting
+        })
     
-    return HealthCheckResponse(
-        status="healthy",
-        message="Hawaiian LeniLani Chatbot API is running! 🌺",
-        hawaii_time=current_time["formatted"],
-        greeting=greeting
-    )
+    # Otherwise, serve the landing page
+    return HTMLResponse(content="""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hawaiian AI Business Assistant - LeniLani Consulting</title>
+    <meta name="description" content="AI-powered business consulting for Hawaiian companies. Combining technology with aloha spirit.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0081a7 0%, #00afb9 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .container { max-width: 800px; animation: fadeIn 1s ease-out; }
+        h1 { font-size: 3.5em; margin-bottom: 20px; }
+        .tagline { font-size: 1.5em; margin-bottom: 30px; opacity: 0.95; }
+        .description { font-size: 1.1em; margin-bottom: 40px; opacity: 0.9; line-height: 1.6; }
+        .cta-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .cta {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .cta-primary {
+            background: white;
+            color: #0081a7;
+        }
+        .cta-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .cta-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        .cta-secondary:hover {
+            background: white;
+            color: #0081a7;
+        }
+        .features {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+        .feature {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .feature-icon { font-size: 2em; margin-bottom: 10px; }
+        .chat-hint {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            .tagline { font-size: 1.2em; }
+            .features { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌺 Aloha! Welcome to Hawaiian AI</h1>
+        <p class="tagline">Where Technology Meets the Spirit of Aloha</p>
+        <p class="description">
+            We empower Hawaiian businesses with cutting-edge AI technology while preserving 
+            our island values and culture. From local shops to tourism companies, we help you 
+            thrive in the digital age without losing your authentic Hawaiian touch.
+        </p>
+        
+        <div class="cta-buttons">
+            <a href="https://lenilani.com" class="cta cta-primary">Visit LeniLani Consulting</a>
+            <a href="mailto:reno@lenilani.com" class="cta cta-secondary">Contact Us</a>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Integration</h3>
+                <p>Smart technology that respects island ways</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h3>Data Analytics</h3>
+                <p>Insights for Hawaii's unique market</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌴</div>
+                <h3>Local Expertise</h3>
+                <p>We understand island business</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="chat-hint">
+        💬 Try our AI assistant →
+    </div>
+    
+    <!-- Chatbot Widget -->
+    <script>
+        window.LENILANI_CHATBOT_URL = window.location.origin;
+    </script>
+    <script src="/widget.js"></script>
+</body>
+</html>
+    """)
 
 
 @app.get("/test")
