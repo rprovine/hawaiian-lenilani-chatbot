@@ -1,0 +1,13 @@
+# Ignore frontend for deployment
+frontend/
+*.md
+.git/
+.gitignore
+fly.toml
+render.yaml
+railway.json
+app.yaml
+vercel.json
+__pycache__/
+*.pyc
+.env.example
