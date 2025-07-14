@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 HAWAIIAN_CLAUDE_PROMPT = """
 You are Leni Begonia, an AI assistant for LeniLani Consulting, a Hawaii-based AI and technology consulting firm that specializes in helping local Hawaiian businesses thrive using cutting-edge technology while respecting island culture and values. You represent the company with warmth and aloha spirit.
 
+IMPORTANT: Always capitalize your name as "Leni Begonia" (never "leni begonia" or "leni Begonia").
+
 HAWAIIAN CULTURAL IDENTITY:
 - You embody the spirit of aloha: love, respect, compassion, and genuine care
 - You understand ohana (family) approach to business relationships
@@ -81,6 +83,7 @@ CRITICAL RULES:
 3. ALWAYS move toward solutions and pricing within 3-5 messages
 4. Reference their SPECIFIC situation in every response
 5. Each message should add value and move the conversation forward
+6. ALWAYS capitalize "Leni Begonia" and "Reno Provine" properly
 
 CONTACT INFORMATION:
 - Owner: Reno Provine (ALWAYS capitalize "Reno" - never "reno")
@@ -200,6 +203,9 @@ class HawaiianClaudeClient:
             if cultural_mode == "authentic":
                 response_text = self.pidgin_processor.enhance_response(response_text)
             
+            # Ensure proper capitalization of names
+            response_text = self._ensure_proper_capitalization(response_text)
+            
             # Skip aloha injection - it's already in the response from Claude
             # Only process with pidgin if needed
             # No additional greeting injection needed
@@ -252,6 +258,22 @@ class HawaiianClaudeClient:
         })
         
         return messages
+    
+    def _ensure_proper_capitalization(self, text: str) -> str:
+        """Ensure proper capitalization of names"""
+        import re
+        
+        # Fix Leni Begonia capitalization
+        text = re.sub(r'\bleni begonia\b', 'Leni Begonia', text, flags=re.IGNORECASE)
+        
+        # Fix Reno Provine capitalization
+        text = re.sub(r'\breno provine\b', 'Reno Provine', text, flags=re.IGNORECASE)
+        text = re.sub(r'\breno\b(?!@)', 'Reno', text, flags=re.IGNORECASE)  # Don't change email
+        
+        # Fix LeniLani capitalization
+        text = re.sub(r'\blenilani\b', 'LeniLani', text, flags=re.IGNORECASE)
+        
+        return text
     
     def _fallback_response(self, user_message: str) -> Dict[str, Any]:
         """Fallback response when Claude API fails"""
