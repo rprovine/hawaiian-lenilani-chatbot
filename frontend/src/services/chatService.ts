@@ -52,15 +52,22 @@ class ChatService {
     metadata?: any
   ): Promise<ChatResponse> {
     try {
+      console.log('Sending message to:', this.apiClient.defaults.baseURL + '/chat');
+      console.log('Request data:', { message, session_id: sessionId, user_id: userId, metadata });
+      
       const response = await this.apiClient.post<ChatResponse>('/chat', {
         message,
         session_id: sessionId,
         user_id: userId,
         metadata,
       });
+      
+      console.log('Response received:', response.data);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
       throw error;
     }
   }

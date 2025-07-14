@@ -5,6 +5,7 @@ import { Box, Container, Grid, Typography, Button } from '@mui/material';
 import { hawaiianTheme } from './styles/hawaiian-theme';
 import HawaiianChatWidget from './components/HawaiianChatWidget';
 import Logo from './components/Logo';
+import DebugChat from './components/DebugChat';
 import './styles/App.css';
 
 function App() {
@@ -170,6 +171,7 @@ function App() {
           </Container>
         </main>
         <HawaiianChatWidget />
+        {window.location.search.includes('debug') && <DebugChat />}
       </div>
     </ThemeProvider>
   );

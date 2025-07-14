@@ -174,6 +174,11 @@ async def root():
     )
 
 
+@app.get("/test")
+async def test():
+    """Simple test endpoint"""
+    return {"message": "Test successful"}
+
 @app.get("/health", response_model=HealthCheckResponse)
 async def health_check():
     """Health check endpoint"""

@@ -147,10 +147,8 @@ class AlohaSpiritInjector:
             Response enhanced with aloha spirit
         """
         
-        # Determine if we should add greeting (if not already present)
-        if conversation_stage == "greeting" or (
-            time_context and not self._has_greeting(response)
-        ):
+        # Only add greeting on very first message
+        if conversation_stage == "greeting" and not self._has_greeting(response):
             response = self._add_greeting(response, time_context)
         
         # Add value expression if appropriate

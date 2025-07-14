@@ -271,8 +271,9 @@ const HawaiianChatWidget: React.FC = () => {
           action: () => sendMessage(text),
         })));
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
+      console.error('Error details:', error.response?.data || error.message);
       
       const errorMessage: ChatMessage = {
         id: uuidv4(),

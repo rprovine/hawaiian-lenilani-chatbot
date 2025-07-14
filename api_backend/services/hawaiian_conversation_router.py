@@ -73,9 +73,10 @@ class HawaiianConversationRouter:
             if metadata:
                 business_context.update(metadata)
             
-            # Add greeting status to context
+            # Add greeting status and conversation tracking to context
             business_context['has_greeted'] = session.get('has_greeted', False)
             business_context['message_count'] = len(conversation_history) // 2  # Rough count of exchanges
+            business_context['conversation_history'] = conversation_history[-6:]  # Last 3 exchanges for context
             
             # Add business categories context
             business_context['categories'] = HAWAIIAN_BUSINESS_CATEGORIES
