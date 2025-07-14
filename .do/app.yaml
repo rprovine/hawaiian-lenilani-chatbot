@@ -10,6 +10,5 @@ services:
   instance_count: 1
   instance_size_slug: basic-xxs
   name: web
-  build_command: pip install -r requirements.txt
   run_command: python run_backend.py
   source_dir: /
