@@ -1,8 +1,8 @@
 (function() {
     'use strict';
 
-    // Configuration
-    const API_URL = window.LENILANI_CHATBOT_URL || 'http://localhost:8000';
+    // Configuration - clean URL to avoid double slashes
+    const API_URL = (window.LENILANI_CHATBOT_URL || 'http://localhost:8000').replace(/\/+$/, '');
     
     // Hawaiian Theme Colors
     const hawaiianColors = {
