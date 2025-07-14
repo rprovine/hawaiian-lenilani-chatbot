@@ -8,6 +8,7 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 import asyncio
 import sys
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,19 @@ class HawaiianConversationRouter:
         # Session storage (in production, use Redis)
         self.sessions: Dict[str, Dict[str, Any]] = {}
         
+        # Initialize lead capture service
+        self.lead_capture = None
+        self._init_lead_capture()
+        
         logger.info("Hawaiian Conversation Router initialized")
+    
+    def _init_lead_capture(self):
+        """Initialize lead capture service"""
+        try:
+            from .lead_capture_service import LeadCaptureService
+            self.lead_capture = LeadCaptureService()
+        except Exception as e:
+            logger.warning(f"Lead capture service not available: {str(e)}")
     
     async def route_message(
         self,
@@ -116,6 +129,11 @@ class HawaiianConversationRouter:
             
             # Keep only last 20 messages
             session["conversation_history"] = conversation_history[-20:]
+            
+            # Check if lead information is available and capture it
+            lead_info = self._extract_lead_info(message, conversation_history, session)
+            if lead_info and self.lead_capture:
+                asyncio.create_task(self._capture_lead(lead_info, session))
             
             return {
                 "response": claude_response["response"],
@@ -239,6 +257,123 @@ class HawaiianConversationRouter:
                 break
                 
         return context
+    
+    def _extract_lead_info(self, message: str, conversation_history: List[Dict], session: Dict) -> Optional[Dict]:
+        """Extract lead information from conversation"""
+        # Look for email
+        email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        email_match = re.search(email_pattern, message)
+        
+        # Look for phone
+        phone_pattern = r'(\d{3}[-.\s]?\d{3}[-.\s]?\d{4}|\(\d{3}\)\s*\d{3}[-.\s]?\d{4})'
+        phone_match = re.search(phone_pattern, message)
+        
+        # Check if we have enough info to create a lead
+        if email_match or phone_match or len(conversation_history) > 6:
+            lead_info = {
+                "email": email_match.group() if email_match else None,
+                "phone": phone_match.group() if phone_match else None,
+                "business_type": session.get("business_context", {}).get("business_type"),
+                "location": session.get("business_context", {}).get("island"),
+                "main_challenge": session.get("business_context", {}).get("challenge"),
+                "message_count": len(conversation_history) // 2
+            }
+            
+            # Extract name if mentioned
+            name_patterns = [
+                r"(?:my name is|i'm|i am|this is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)",
+                r"^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+here"
+            ]
+            for pattern in name_patterns:
+                name_match = re.search(pattern, message, re.IGNORECASE)
+                if name_match:
+                    lead_info["name"] = name_match.group(1)
+                    break
+            
+            return lead_info
+        
+        return None
+    
+    async def _capture_lead(self, lead_info: Dict, session: Dict):
+        """Capture and send lead information"""
+        try:
+            # Generate conversation summary
+            conversation_summary = self._generate_conversation_summary(session)
+            
+            # Calculate qualification score
+            qualification_score = self._calculate_qualification_score(lead_info, session)
+            
+            # Capture the lead
+            result = await self.lead_capture.capture_lead(
+                lead_data=lead_info,
+                conversation_summary=conversation_summary,
+                qualification_score=qualification_score
+            )
+            
+            if result["success"]:
+                logger.info(f"Lead captured successfully: {result['lead_id']}")
+            else:
+                logger.error(f"Failed to capture lead: {result.get('error')}")
+                
+        except Exception as e:
+            logger.error(f"Error in lead capture: {str(e)}")
+    
+    def _generate_conversation_summary(self, session: Dict) -> str:
+        """Generate a summary of the conversation"""
+        conversation_history = session.get("conversation_history", [])
+        business_context = session.get("business_context", {})
+        
+        summary_parts = []
+        
+        # Business type and location
+        if business_context.get("business_type"):
+            summary_parts.append(f"Business: {business_context['business_type']}")
+        if business_context.get("island"):
+            summary_parts.append(f"Location: {business_context['island']}")
+        
+        # Main topics discussed
+        if business_context.get("challenge"):
+            summary_parts.append(f"Main challenge: {business_context['challenge']}")
+        
+        # Conversation flow
+        if conversation_history:
+            summary_parts.append(f"Messages exchanged: {len(conversation_history) // 2}")
+            
+            # Get last few user messages
+            user_messages = [msg["content"] for msg in conversation_history if msg["role"] == "user"][-3:]
+            if user_messages:
+                summary_parts.append(f"Recent topics: {', '.join(user_messages[:50] + '...' if len(msg) > 50 else msg for msg in user_messages)}")
+        
+        return " | ".join(summary_parts)
+    
+    def _calculate_qualification_score(self, lead_info: Dict, session: Dict) -> int:
+        """Calculate lead qualification score (0-100)"""
+        score = 0
+        
+        # Contact info provided (30 points)
+        if lead_info.get("email"):
+            score += 20
+        if lead_info.get("phone"):
+            score += 10
+        
+        # Business details (30 points)
+        if lead_info.get("business_type"):
+            score += 10
+        if lead_info.get("location"):
+            score += 10
+        if lead_info.get("main_challenge"):
+            score += 10
+        
+        # Engagement level (40 points)
+        message_count = lead_info.get("message_count", 0)
+        if message_count >= 5:
+            score += 40
+        elif message_count >= 3:
+            score += 25
+        elif message_count >= 2:
+            score += 15
+        
+        return min(score, 100)
     
     def get_suggestions(self, user_message: str) -> List[str]:
         """Get contextual suggestions for user"""
