@@ -720,7 +720,13 @@
                 input.disabled = false;
                 sendBtn.disabled = false;
                 console.error('Failed to send message:', error);
-                addMessage('Sorry, I\'m having trouble connecting. Please try again.', 'bot');
+                
+                // Check if it's a rate limit error
+                if (error.message && (error.message.includes('429') || error.message.includes('rate'))) {
+                    addMessage('🌺 Whoa, bruddah! We stay getting plenty requests right now. Can you wait one minute and try again? Mahalo for your patience! 🤙', 'bot');
+                } else {
+                    addMessage('Sorry, I\'m having trouble connecting. Please try again.', 'bot');
+                }
             }
         }
         
