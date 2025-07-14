@@ -344,10 +344,10 @@ const HawaiianChatWidget: React.FC = () => {
                 <Logo variant="icon" size="small" light />
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    LeniLani Consulting
+                    Leni Begonia
                   </Typography>
                   <Typography variant="caption" sx={{ opacity: 0.9 }}>
-                    {getHawaiianTime()} HST {getTimeIcon()}
+                    LeniLani Consulting • {getHawaiianTime()} HST {getTimeIcon()}
                   </Typography>
                 </Box>
               </Box>
@@ -363,7 +363,7 @@ const HawaiianChatWidget: React.FC = () => {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <h3>Aloha! Welcome to LeniLani Consulting 🌺</h3>
+                  <h3>Aloha! I'm Leni Begonia 🌺</h3>
                   <p>I'm here to help your Hawaiian business thrive with AI technology!</p>
                   <Typography variant="body2" gutterBottom>
                     What kind of business do you have?

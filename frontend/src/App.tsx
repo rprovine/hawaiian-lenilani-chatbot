@@ -18,7 +18,7 @@ function App() {
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
               <Logo variant="full" size="large" light />
               <Typography variant="h3" component="h1" sx={{ fontWeight: 700, textAlign: 'center' }}>
-                Hawaiian Business AI Assistant
+                Meet Leni Begonia - Your Hawaiian Business AI Assistant
               </Typography>
               <Typography variant="h6" sx={{ opacity: 0.9, textAlign: 'center', maxWidth: 600 }}>
                 Experience the power of AI-driven business consulting with authentic Hawaiian cultural values
