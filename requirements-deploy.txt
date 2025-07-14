@@ -1,0 +1,18 @@
+# Minimal requirements for deployment
+# Claude API
+anthropic==0.34.2
+
+# Backend
+fastapi==0.115.5
+uvicorn==0.32.1
+pydantic==2.10.3
+python-multipart==0.0.12
+
+# Utilities
+python-dotenv==1.0.1
+httpx==0.28.1
+tenacity==9.0.0
+pytz==2024.2
+
+# CORS support
+python-jose[cryptography]==3.3.0

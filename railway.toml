@@ -1,0 +1,11 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "python run_backend.py"
+restartPolicyType = "on-failure"
+restartPolicyMaxRetries = 3
+
+[healthcheck]
+path = "/health"
+port = 8000

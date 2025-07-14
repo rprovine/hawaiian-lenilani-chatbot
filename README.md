@@ -12,12 +12,12 @@ To establish LeniLani as the premier AI consultant for Hawaiian businesses by de
 - **Authentic Hawaiian Communication**: Natural use of Hawaiian Pidgin English and cultural greetings
 - **Island Business Intelligence**: Understanding of inter-island commerce, tourism patterns, and local challenges
 - **Cultural Values Integration**: Embodies aloha, ohana, malama 'aina, and lokahi in all interactions
-- **Hybrid AI System**: Rasa for structured workflows + Claude API for cultural conversations
+- **Advanced AI System**: Claude API for intelligent cultural conversations
 - **Hawaiian Business Services**: Tailored solutions for tourism, agriculture, retail, and restaurants
 
 ## 🛠️ Technology Stack
 
-- **AI Engines**: Rasa 3.x + Anthropic Claude API
+- **AI Engine**: Anthropic Claude API
 - **Backend**: FastAPI with Hawaiian business logic
 - **Frontend**: React.js with Hawaiian-themed design
 - **Databases**: PostgreSQL + Redis
