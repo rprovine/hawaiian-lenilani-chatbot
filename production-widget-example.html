@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website - With Hawaiian Chatbot</title>
+    <style>
+        /* Your website styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin: 60px 0;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .feature {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Your Website Content -->
+    <div class="hero">
+        <h1>Welcome to Your Business</h1>
+        <p>This is an example of your website with the Hawaiian AI Chatbot integrated</p>
+    </div>
+
+    <div class="container">
+        <section class="section">
+            <h2>Our Services</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <h3>Service One</h3>
+                    <p>Description of your first service offering.</p>
+                </div>
+                <div class="feature">
+                    <h3>Service Two</h3>
+                    <p>Description of your second service offering.</p>
+                </div>
+                <div class="feature">
+                    <h3>Service Three</h3>
+                    <p>Description of your third service offering.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>About Us</h2>
+            <p>Your company information goes here. The AI chatbot will appear in the bottom right corner of this page, ready to help your visitors!</p>
+        </section>
+    </div>
+
+    <!-- Hawaiian Chatbot Integration -->
+    <!-- 
+        INTEGRATION INSTRUCTIONS:
+        1. Copy these two script tags
+        2. Paste them just before the closing </body> tag on your website
+        3. Replace YOUR_BACKEND_URL with your actual Render URL
+    -->
+    <script>
+        // Configure the chatbot backend URL
+        window.LENILANI_CHATBOT_URL = 'https://hawaiian-lenilani-chatbot.onrender.com';
+    </script>
+    <script src="https://raw.githubusercontent.com/rprovine/hawaiian-lenilani-chatbot/main/public/hawaiian-widget.js"></script>
+    
+    <!-- Alternative: Host the widget file on your own server -->
+    <!-- <script src="/path/to/your/hawaiian-widget.js"></script> -->
+</body>
+</html>
