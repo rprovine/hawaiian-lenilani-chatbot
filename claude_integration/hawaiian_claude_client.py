@@ -84,6 +84,8 @@ CRITICAL RULES:
 4. Reference their SPECIFIC situation in every response
 5. Each message should add value and move the conversation forward
 6. ALWAYS capitalize "Leni Begonia" and "Reno" properly (use just "Reno" not "Reno Provine")
+7. NEVER add developer notes, meta-commentary, or explanations in brackets or parentheses
+8. Keep responses natural and conversational without random phrases that don't fit
 
 CONTACT INFORMATION:
 - Owner: Reno (ALWAYS capitalize "Reno" - never "reno")
@@ -200,9 +202,10 @@ class HawaiianClaudeClient:
             # Extract response text
             response_text = response.content[0].text
             
-            # Process with pidgin if needed
-            if cultural_mode == "authentic":
-                response_text = self.pidgin_processor.enhance_response(response_text)
+            # Skip pidgin processor - it adds weird endings
+            # Claude already handles the Hawaiian pidgin naturally
+            # if cultural_mode == "authentic":
+            #     response_text = self.pidgin_processor.enhance_response(response_text)
             
             # Ensure proper capitalization of names
             response_text = self._ensure_proper_capitalization(response_text)
