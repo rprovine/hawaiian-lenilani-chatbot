@@ -46,7 +46,7 @@ function App() {
           <Container maxWidth="lg">
             <Box className="hero-section" sx={{ mb: 6 }}>
               <Typography variant="h4" component="h2" sx={{ textAlign: 'center', mb: 2, color: '#264653' }}>
-                Why Choose LeniLani AI?
+                Why Choose LeniLani Consulting?
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', mb: 4, color: '#2D3436', maxWidth: 800, mx: 'auto' }}>
                 Our AI assistant understands the unique challenges and opportunities of running a business in Hawaii. 
@@ -85,7 +85,7 @@ function App() {
                 <Grid item xs={12} md={4}>
                   <Box className="testimonial">
                     <Typography variant="body1" sx={{ fontStyle: 'italic', mb: 2 }}>
-                      "LeniLani AI helped me understand local regulations and connect with the right suppliers on Maui. 
+                      "LeniLani Consulting helped me understand local regulations and connect with the right suppliers on Maui. 
                       The cultural insights were invaluable!"
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#666' }}>
@@ -123,7 +123,7 @@ function App() {
                 Ready to Grow Your Hawaiian Business?
               </Typography>
               <Typography variant="body1" sx={{ mb: 3, color: '#2D3436' }}>
-                Start a conversation with LeniLani AI today and discover how we can help you thrive
+                Start a conversation with LeniLani Consulting today and discover how we can help you thrive
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Button 

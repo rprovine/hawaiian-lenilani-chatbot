@@ -46,8 +46,8 @@ const Logo: React.FC<LogoProps> = ({
   return (
     <LogoContainer size={size}>
       <LogoImage 
-        src="/images/lenilani-logo.png" 
-        alt="LeniLani Logo" 
+        src="/images/lenilani-logo.webp" 
+        alt="LeniLani Consulting Logo" 
         size={size}
         onError={(e) => {
           // Fallback if logo not found

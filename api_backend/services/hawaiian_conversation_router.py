@@ -58,6 +58,9 @@ class HawaiianConversationRouter:
         """Route to Claude for cultural and business responses"""
         try:
             # Import Claude client (avoid circular import)
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
             from claude_integration.hawaiian_claude_client import HawaiianClaudeClient
             
             claude_client = HawaiianClaudeClient()

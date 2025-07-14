@@ -28,6 +28,7 @@ import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
 import QuickReplies from './QuickReplies';
 import { hawaiianColors } from '../styles/hawaiian-theme';
+import Logo from './Logo';
 
 const WidgetContainer = styled.div`
   position: fixed;
@@ -339,17 +340,10 @@ const HawaiianChatWidget: React.FC = () => {
           >
             <ChatHeader timeOfDay={timeOfDay}>
               <Box display="flex" alignItems="center" gap={2}>
-                <Avatar
-                  sx={{ 
-                    bgcolor: 'rgba(255, 255, 255, 0.2)',
-                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                  }}
-                >
-                  🌺
-                </Avatar>
+                <Logo variant="icon" size="small" light />
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    LeniLani AI
+                    LeniLani Consulting
                   </Typography>
                   <Typography variant="caption" sx={{ opacity: 0.9 }}>
                     {getHawaiianTime()} HST {getTimeIcon()}
@@ -368,7 +362,7 @@ const HawaiianChatWidget: React.FC = () => {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <h3>Aloha! Welcome to LeniLani 🌺</h3>
+                  <h3>Aloha! Welcome to LeniLani Consulting 🌺</h3>
                   <p>I'm here to help your Hawaiian business thrive with AI technology!</p>
                   <Typography variant="body2" gutterBottom>
                     What kind of business do you have?
