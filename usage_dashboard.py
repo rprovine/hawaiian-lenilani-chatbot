@@ -18,10 +18,47 @@ def print_dashboard():
     print(f"🔑 API Key: {os.getenv('ANTHROPIC_API_KEY', 'Not Set')[:8]}...")
     print()
     
-    # Free Tier Limits
-    print("📊 Free Tier Limits:")
-    print("├─ Rate Limit: 5 requests/minute")
-    print("├─ Daily Tokens: 300,000")
+    # Tier Configuration
+    tier = os.getenv('ANTHROPIC_TIER', 'build1').lower()
+    
+    tiers = {
+        'free': {
+            'name': 'Free Tier',
+            'rate_limit': 5,
+            'daily_tokens': 300_000,
+            'cost': '$0/month'
+        },
+        'build1': {
+            'name': 'Build Tier 1',
+            'rate_limit': 50,
+            'daily_tokens': 1_000_000,
+            'cost': '$5/month'
+        },
+        'build2': {
+            'name': 'Build Tier 2',
+            'rate_limit': 1000,
+            'daily_tokens': 2_500_000,
+            'cost': '$25/month'
+        },
+        'build3': {
+            'name': 'Build Tier 3',
+            'rate_limit': 2000,
+            'daily_tokens': 5_000_000,
+            'cost': '$250/month'
+        },
+        'build4': {
+            'name': 'Build Tier 4',
+            'rate_limit': 4000,
+            'daily_tokens': 10_000_000,
+            'cost': '$1,250/month'
+        }
+    }
+    
+    current_tier = tiers.get(tier, tiers['build1'])
+    
+    print(f"📊 Current Tier: {current_tier['name']} ({current_tier['cost']})")
+    print(f"├─ Rate Limit: {current_tier['rate_limit']:,} requests/minute")
+    print(f"├─ Daily Tokens: {current_tier['daily_tokens']:,}")
     print("└─ Model: Claude 3 (all models)")
     print()
     
@@ -59,8 +96,10 @@ def print_dashboard():
     # Usage Tips
     print("💡 Usage Optimization:")
     print("├─ Average conversation: ~400 tokens")
-    print("├─ Daily capacity: ~750 conversations (free tier)")
-    print("├─ Peak rate: 300 conversations/hour (5/min limit)")
+    avg_conversations = current_tier['daily_tokens'] // 400
+    hourly_capacity = current_tier['rate_limit'] * 60
+    print(f"├─ Daily capacity: ~{avg_conversations:,} conversations")
+    print(f"├─ Peak rate: {hourly_capacity:,} conversations/hour")
     print("└─ Use shorter prompts to save tokens")
     print()
     

@@ -76,9 +76,20 @@ class UsageMonitor:
         current_rate = self.get_current_rate()
         daily_tokens = self.get_daily_tokens()
         
-        # Free tier limits
-        rate_limit = 5
-        daily_token_limit = 300000
+        # Get tier limits from environment
+        tier = os.getenv('ANTHROPIC_TIER', 'build1').lower()
+        
+        tier_limits = {
+            'free': {'rate': 5, 'tokens': 300_000},
+            'build1': {'rate': 50, 'tokens': 1_000_000},
+            'build2': {'rate': 1000, 'tokens': 2_500_000},
+            'build3': {'rate': 2000, 'tokens': 5_000_000},
+            'build4': {'rate': 4000, 'tokens': 10_000_000}
+        }
+        
+        limits = tier_limits.get(tier, tier_limits['build1'])
+        rate_limit = limits['rate']
+        daily_token_limit = limits['tokens']
         
         # Time until rate limit reset
         now = datetime.now()
@@ -112,6 +123,16 @@ class UsageMonitor:
         print("🌺 Anthropic API Usage Monitor")
         print("=" * 50)
         print(f"🕐 Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        
+        tier_names = {
+            'free': 'Free Tier',
+            'build1': 'Build Tier 1 ($5/mo)',
+            'build2': 'Build Tier 2 ($25/mo)',
+            'build3': 'Build Tier 3 ($250/mo)',
+            'build4': 'Build Tier 4 ($1,250/mo)'
+        }
+        tier = os.getenv('ANTHROPIC_TIER', 'build1').lower()
+        print(f"📊 Tier: {tier_names.get(tier, 'Build Tier 1')}")
         print()
         
         # Rate limit status
