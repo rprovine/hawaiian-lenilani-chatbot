@@ -99,6 +99,16 @@ public_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "public")
 if os.path.exists(public_dir):
     app.mount("/public", StaticFiles(directory=public_dir), name="public")
     
+    # Serve full landing page
+    @app.get("/landing", response_class=HTMLResponse)
+    async def serve_landing_page():
+        """Serve the full landing page"""
+        landing_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "landing-page.html")
+        if os.path.exists(landing_path):
+            with open(landing_path, 'r') as f:
+                return HTMLResponse(content=f.read())
+        return HTMLResponse("<h1>Landing page not found</h1>", status_code=404)
+    
     # Serve widget.js at root level for convenience
     @app.get("/widget.js")
     async def serve_widget():

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hawaiian AI Business Assistant - LeniLani Consulting</title>
+    <meta name="description" content="Empowering Hawaiian businesses with AI technology while preserving the spirit of aloha. Smart solutions for island enterprises.">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Hawaiian AI Business Assistant">
+    <meta property="og:description" content="Where Technology Meets Aloha Spirit">
+    <meta property="og:image" content="https://hawaiian-lenilani-chatbot.onrender.com/logo">
+    <meta property="og:url" content="https://ai.hawaii.lenilani.com">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comfortaa', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        /* Header Section */
+        .header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0081a7;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #00afb9;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #0081a7 0%, #00afb9 50%, #93e1d8 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff20" d="M0,96L48,112C96,128,192,160,288,154.7C384,149,480,107,576,90.7C672,75,768,85,864,106.7C960,128,1056,160,1152,154.7C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
+            animation: wave 20s linear infinite;
+            opacity: 0.1;
+        }
+        
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .hero-content {
+            max-width: 900px;
+            z-index: 1;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .hero .tagline {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        
+        .hero .description {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta {
+            display: inline-block;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+        
+        .cta-primary {
+            background: white;
+            color: #0081a7;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .cta-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .cta-secondary:hover {
+            background: white;
+            color: #0081a7;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 20px;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-header h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #0081a7;
+        }
+        
+        .section-header p {
+            font-size: 1.2em;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        }
+        
+        .feature-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #0081a7 0%, #00afb9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #0081a7;
+        }
+        
+        .feature p {
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        /* How It Works Section */
+        .how-it-works {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #0081a7 0%, #00afb9 100%);
+            color: white;
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .step {
+            text-align: center;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: white;
+            color: #0081a7;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .step h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        /* Try It Section */
+        .try-it {
+            padding: 100px 20px;
+            background: white;
+            text-align: center;
+        }
+        
+        .demo-area {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .demo-area h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #0081a7;
+        }
+        
+        .demo-area p {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .chat-preview {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 60px 20px 40px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+        }
+        
+        .footer-bottom {
+            padding-top: 30px;
+            border-top: 1px solid #333;
+            opacity: 0.6;
+        }
+        
+        /* Chat Widget Prompt */
+        .chat-prompt {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: #ff6b6b;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite;
+            z-index: 999;
+            cursor: pointer;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .hero .tagline {
+                font-size: 1.3em;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="https://hawaiian-lenilani-chatbot.onrender.com/logo" alt="LeniLani" class="logo" onerror="this.style.display='none'">
+                <span class="logo-text">LeniLani AI</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#try-it">Try It</a>
+                <a href="https://lenilani.com">Main Site</a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>🌺 Hawaiian AI Business Assistant</h1>
+            <p class="tagline">Where Technology Meets Aloha Spirit</p>
+            <p class="description">
+                Empower your Hawaiian business with AI that understands island culture. 
+                From customer service to data insights, we bring you cutting-edge technology 
+                with the warmth and wisdom of local values.
+            </p>
+            <div class="cta-buttons">
+                <a href="#try-it" class="cta cta-primary">Try It Now</a>
+                <a href="https://lenilani.com/contact" class="cta cta-secondary">Get Started</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Built for Hawaiian Businesses</h2>
+                <p>AI solutions that understand the unique needs of island enterprises</p>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Smart AI Assistant</h3>
+                    <p>24/7 customer support that speaks with aloha. Understands local culture, 
+                    Hawaiian Pidgin, and provides authentic island-style service.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <h3>Island Analytics</h3>
+                    <p>Data insights tailored for Hawaii's unique market. Track tourist seasons, 
+                    local events, and island-specific trends that matter to your business.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🌴</div>
+                    <h3>Local First</h3>
+                    <p>Built by and for Hawaii businesses. We understand shipping challenges, 
+                    seasonal patterns, and the importance of maintaining authentic relationships.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Secure & Private</h3>
+                    <p>Your data stays protected with enterprise-grade security. We respect 
+                    the trust you place in us, just like good neighbors should.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Easy Integration</h3>
+                    <p>Add to any website in minutes. No technical expertise needed. 
+                    Works seamlessly with your existing tools and platforms.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">💡</div>
+                    <h3>Always Learning</h3>
+                    <p>Our AI continuously improves, learning about your business and customers 
+                    to provide better service over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 style="color: white;">How It Works</h2>
+                <p style="color: rgba(255,255,255,0.9);">Get started in minutes, not months</p>
+            </div>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Add the Code</h3>
+                    <p>Simply paste our widget code into your website. It takes less than 2 minutes.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Customize</h3>
+                    <p>Tell us about your business, and we'll configure the AI to match your needs.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Launch</h3>
+                    <p>Your AI assistant goes live, ready to help customers with aloha spirit 24/7.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Grow</h3>
+                    <p>Watch your business thrive with better customer service and valuable insights.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Try It Section -->
+    <section class="try-it" id="try-it">
+        <div class="container">
+            <div class="section-header">
+                <h2>Experience It Yourself</h2>
+                <p>See how our AI assistant can help your business</p>
+            </div>
+            
+            <div class="demo-area">
+                <h3>🌺 Click the Flower to Chat</h3>
+                <p>Our AI assistant Leni is ready to answer your questions about Hawaiian business solutions, 
+                from e-commerce to tourism, with genuine aloha spirit.</p>
+                
+                <div class="chat-preview">
+                    <p><strong>Try asking:</strong></p>
+                    <ul style="text-align: left; display: inline-block; margin-top: 15px;">
+                        <li>"How can AI help my Hawaiian restaurant?"</li>
+                        <li>"Tell me about tourism analytics"</li>
+                        <li>"What makes you different from mainland solutions?"</li>
+                        <li>"Can you speak Pidgin?"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://lenilani.com">LeniLani Consulting</a>
+                <a href="mailto:reno@lenilani.com">Contact</a>
+                <a href="tel:808-766-1164">(808) 766-1164</a>
+                <a href="https://lenilani.com/privacy">Privacy</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 LeniLani Consulting. Made with aloha in Hawaii. 🌺</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Chat Prompt -->
+    <div class="chat-prompt" onclick="alert('Look for the flower icon in the bottom right!')">
+        💬 Try our AI Chat →
+    </div>
+    
+    <!-- Hawaiian Chatbot Widget -->
+    <script>
+        window.LENILANI_CHATBOT_URL = 'https://hawaiian-lenilani-chatbot.onrender.com';
+    </script>
+    <script src="https://hawaiian-lenilani-chatbot.onrender.com/widget.js"></script>
+    
+    <!-- Smooth Scrolling -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
