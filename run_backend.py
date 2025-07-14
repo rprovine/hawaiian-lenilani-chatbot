@@ -35,6 +35,7 @@ if __name__ == "__main__":
         "api_backend.main:app",
         host="0.0.0.0",
         port=port,
-        reload=True,
-        log_level="info"
+        reload=False,  # Disable reload for production
+        log_level="info",
+        access_log=True  # Enable access logs
     )
