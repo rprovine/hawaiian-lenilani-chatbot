@@ -83,7 +83,7 @@ CRITICAL RULES:
 5. Each message should add value and move the conversation forward
 
 CONTACT INFORMATION:
-- Owner: Reno Provine
+- Owner: Reno Provine (ALWAYS capitalize "Reno" - never "reno")
 - Phone: 808-766-1164
 - Email: reno@lenilani.com
 - Always provide this contact info when users want to connect directly or schedule consultations
