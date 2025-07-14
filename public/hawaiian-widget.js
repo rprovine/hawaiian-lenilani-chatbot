@@ -512,6 +512,12 @@
     
     // Initialize widget
     function initWidget() {
+        // Prevent double initialization
+        if (document.querySelector('.lenilani-chat-widget')) {
+            console.log('Hawaiian widget already initialized');
+            return;
+        }
+        
         // Add styles
         const styleSheet = document.createElement('style');
         styleSheet.textContent = styles;
@@ -536,6 +542,7 @@
         let isOpen = false;
         let conversationId = null;
         let isFirstOpen = true;
+        let chatStarted = false;
         
         // Toggle chat window
         function toggleChat() {
@@ -552,6 +559,15 @@
         
         // Start conversation
         function startChat() {
+            if (chatStarted) {
+                // Chat already started, just switch screens
+                welcomeScreen.style.display = 'none';
+                messagesContainer.style.display = 'flex';
+                input.focus();
+                return;
+            }
+            
+            chatStarted = true;
             conversationId = 'web-' + Date.now();
             welcomeScreen.style.display = 'none';
             messagesContainer.style.display = 'flex';
