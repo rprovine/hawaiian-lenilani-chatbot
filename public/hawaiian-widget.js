@@ -142,7 +142,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            overflow: hidden;
+            padding: 4px;
+        }
+        
+        .lenilani-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         
         .lenilani-chat-title {
@@ -446,7 +453,9 @@
             <div class="lenilani-chat-window" id="lenilani-window">
                 <div class="lenilani-chat-header">
                     <div class="lenilani-header-content">
-                        <div class="lenilani-logo">🌺</div>
+                        <div class="lenilani-logo">
+                            <img src="${API_URL}/logo" alt="LeniLani" />
+                        </div>
                         <div class="lenilani-chat-title">
                             <div class="name">LeniLani Consulting</div>
                             <div class="status">
@@ -561,12 +570,14 @@
         function startChat() {
             if (chatStarted) {
                 // Chat already started, just switch screens
+                console.log('Chat already started, not sending another greeting');
                 welcomeScreen.style.display = 'none';
                 messagesContainer.style.display = 'flex';
                 input.focus();
                 return;
             }
             
+            console.log('Starting new chat session');
             chatStarted = true;
             conversationId = 'web-' + Date.now();
             welcomeScreen.style.display = 'none';
@@ -575,8 +586,12 @@
             sendBtn.disabled = false;
             input.focus();
             
-            // Send initial greeting to get conversation started
-            sendMessage('Start conversation', true);
+            // Send initial greeting to get conversation started - but only once!
+            setTimeout(() => {
+                if (messagesContainer.children.length === 0) {
+                    sendMessage('Start conversation', true);
+                }
+            }, 100);
         }
         
         // Format time
@@ -661,6 +676,8 @@
             showTyping();
             input.disabled = true;
             sendBtn.disabled = true;
+            
+            console.log('Sending message to API:', message, 'Session:', conversationId);
             
             try {
                 const response = await fetch(`${API_URL}/chat`, {

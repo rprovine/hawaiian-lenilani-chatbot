@@ -110,6 +110,14 @@ if os.path.exists(public_dir):
         if os.path.exists(widget_path):
             return FileResponse(widget_path, media_type="application/javascript")
         raise HTTPException(status_code=404, detail="Widget not found")
+    
+    # Serve logo
+    @app.get("/logo")
+    async def serve_logo():
+        logo_path = os.path.join(public_dir, "lenilani-logo.webp")
+        if os.path.exists(logo_path):
+            return FileResponse(logo_path, media_type="image/webp")
+        raise HTTPException(status_code=404, detail="Logo not found")
 
 
 # Request/Response Models
