@@ -448,10 +448,10 @@
                     <div class="lenilani-header-content">
                         <div class="lenilani-logo">🌺</div>
                         <div class="lenilani-chat-title">
-                            <div class="name">Leni Begonia</div>
+                            <div class="name">LeniLani Consulting</div>
                             <div class="status">
                                 <span class="lenilani-status-dot"></span>
-                                Online • Hawaii Time
+                                Leni Begonia • Online
                             </div>
                         </div>
                     </div>

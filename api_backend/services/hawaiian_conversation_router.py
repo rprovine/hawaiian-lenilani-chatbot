@@ -24,6 +24,10 @@ class HawaiianConversationRouter:
         self.lead_capture = None
         self._init_lead_capture()
         
+        # Initialize Claude client once
+        self.claude_client = None
+        self._init_claude_client()
+        
         logger.info("Hawaiian Conversation Router initialized")
     
     def _init_lead_capture(self):
@@ -33,6 +37,19 @@ class HawaiianConversationRouter:
             self.lead_capture = LeadCaptureService()
         except Exception as e:
             logger.warning(f"Lead capture service not available: {str(e)}")
+    
+    def _init_claude_client(self):
+        """Initialize Claude client once"""
+        try:
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+            from claude_integration.hawaiian_claude_client import HawaiianClaudeClient
+            self.claude_client = HawaiianClaudeClient()
+            logger.info("Claude client initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize Claude client: {str(e)}")
+            self.claude_client = None
     
     async def route_message(
         self,
@@ -71,12 +88,17 @@ class HawaiianConversationRouter:
     ) -> Dict[str, Any]:
         """Route to Claude for cultural and business responses"""
         try:
-            # Import Claude client and business categories (avoid circular import)
-            sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-            from claude_integration.hawaiian_claude_client import HawaiianClaudeClient
-            from api_backend.config.business_categories import HAWAIIAN_BUSINESS_CATEGORIES, CATEGORY_QUICK_SELECT, ISLAND_CATEGORY_FOCUS
+            # Check if Claude client is available
+            if not self.claude_client:
+                logger.error("Claude client not initialized")
+                return {
+                    "response": "Ho brah, I stay having some technical difficulties right now. Can you try again in a bit? Mahalo for your patience! 🤙",
+                    "metadata": {},
+                    "requires_human": True
+                }
             
-            claude_client = HawaiianClaudeClient()
+            # Import business categories (avoid circular import)
+            from api_backend.config.business_categories import HAWAIIAN_BUSINESS_CATEGORIES, CATEGORY_QUICK_SELECT, ISLAND_CATEGORY_FOCUS
             
             # Build conversation history
             conversation_history = session.get("conversation_history", [])
@@ -106,7 +128,7 @@ class HawaiianConversationRouter:
             
             # Generate Claude response
             claude_response = await asyncio.to_thread(
-                claude_client.generate_response,
+                self.claude_client.generate_response,
                 user_message=message,
                 conversation_history=conversation_history,
                 business_context=business_context,
