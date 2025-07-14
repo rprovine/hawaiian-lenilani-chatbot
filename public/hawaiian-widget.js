@@ -726,23 +726,39 @@
         
         // Handle action cards
         function handleAction(action) {
-            startChat();
-            setTimeout(() => {
-                switch(action) {
-                    case 'services':
-                        sendMessage('Tell me about your services');
-                        break;
-                    case 'consultation':
-                        sendMessage('I\'d like to schedule a consultation');
-                        break;
-                    case 'pricing':
-                        sendMessage('What are your prices?');
-                        break;
-                    case 'chat':
-                        // Just start the chat, no preset message
-                        break;
+            // For specific actions, send the action message instead of generic greeting
+            if (action !== 'chat') {
+                // Don't call startChat for specific actions
+                if (chatStarted) {
+                    welcomeScreen.style.display = 'none';
+                    messagesContainer.style.display = 'flex';
+                    input.focus();
+                } else {
+                    chatStarted = true;
+                    conversationId = 'web-' + Date.now();
+                    welcomeScreen.style.display = 'none';
+                    messagesContainer.style.display = 'flex';
+                    input.disabled = false;
+                    sendBtn.disabled = false;
+                    input.focus();
+                    
+                    // Send the specific action message instead of generic greeting
+                    switch(action) {
+                        case 'services':
+                            sendMessage('Tell me about your services', true);
+                            break;
+                        case 'consultation':
+                            sendMessage('I\'d like to schedule a consultation', true);
+                            break;
+                        case 'pricing':
+                            sendMessage('What are your prices?', true);
+                            break;
+                    }
                 }
-            }, 500);
+            } else {
+                // For generic chat, use the normal startChat
+                startChat();
+            }
         }
         
         // Event listeners
