@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+frontend/
+tests/
+docs/
+*.log
+.env
+.env.*
+*.md
+.git/
+.github/
+.gitignore
+
+# Build files
+dist/
+build/
+*.egg-info/
+
+# Deployment configs (keep only what's needed)
+fly.toml
+render.yaml
+railway.json
+vercel.json
