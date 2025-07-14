@@ -73,6 +73,10 @@ class HawaiianConversationRouter:
             if metadata:
                 business_context.update(metadata)
             
+            # Add greeting status to context
+            business_context['has_greeted'] = session.get('has_greeted', False)
+            business_context['message_count'] = len(conversation_history) // 2  # Rough count of exchanges
+            
             # Generate Claude response
             claude_response = await asyncio.to_thread(
                 claude_client.generate_response,
@@ -81,6 +85,10 @@ class HawaiianConversationRouter:
                 business_context=business_context,
                 cultural_mode="authentic"
             )
+            
+            # Mark that we've greeted if this is first message
+            if not session.get('has_greeted'):
+                session['has_greeted'] = True
             
             # Update conversation history
             conversation_history.append({
@@ -121,7 +129,8 @@ class HawaiianConversationRouter:
                 "created_at": datetime.now(),
                 "conversation_history": [],
                 "business_context": {},
-                "conversation_stage": "greeting"
+                "conversation_stage": "greeting",
+                "has_greeted": False
             }
         
         return self.sessions[session_id]

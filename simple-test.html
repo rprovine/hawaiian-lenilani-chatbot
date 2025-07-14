@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Chat Test</title>
+</head>
+<body>
+    <h1>Simple Backend Test</h1>
+    <button onclick="testHealth()">Test Health</button>
+    <button onclick="testChat()">Test Chat</button>
+    <pre id="output"></pre>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        async function testHealth() {
+            output.textContent = 'Testing health endpoint...\n';
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                output.textContent += 'Success!\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                output.textContent += 'Error: ' + error.message;
+                console.error('Full error:', error);
+            }
+        }
+        
+        async function testChat() {
+            output.textContent = 'Testing chat endpoint...\n';
+            try {
+                const response = await fetch('http://localhost:8000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: 'Aloha!',
+                        session_id: 'test-123'
+                    })
+                });
+                const data = await response.json();
+                output.textContent += 'Success!\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                output.textContent += 'Error: ' + error.message;
+                console.error('Full error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
