@@ -8,21 +8,21 @@ To add the Hawaiian AI Chatbot to your website, add these two lines of code just
 <script>
     window.LENILANI_CHATBOT_URL = 'https://hawaiian-lenilani-chatbot.onrender.com';
 </script>
-<script src="https://cdn.jsdelivr.net/gh/rprovine/hawaiian-lenilani-chatbot@main/public/hawaiian-widget.js"></script>
+<script src="https://hawaiian-lenilani-chatbot.onrender.com/widget.js"></script>
 ```
 
 That's it! The chatbot will appear as a flower icon (🌺) in the bottom right corner of your website.
 
 ## Integration Options
 
-### Option 1: CDN Integration (Recommended)
-Use the JSDelivr CDN for automatic updates and fast loading:
+### Option 1: Backend-Hosted Widget (Recommended)
+Load the widget directly from your backend for best reliability:
 
 ```html
 <script>
     window.LENILANI_CHATBOT_URL = 'https://YOUR-BACKEND-URL.onrender.com';
 </script>
-<script src="https://cdn.jsdelivr.net/gh/rprovine/hawaiian-lenilani-chatbot@main/public/hawaiian-widget.js"></script>
+<script src="https://YOUR-BACKEND-URL.onrender.com/widget.js"></script>
 ```
 
 ### Option 2: Self-Hosted
