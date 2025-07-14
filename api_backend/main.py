@@ -10,7 +10,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr
 import pytz
 import httpx
@@ -69,6 +70,8 @@ app = FastAPI(
 default_origins = [
     "http://localhost:3000",  # Development
     "http://localhost:8000",  # Development API
+    "http://localhost:8080",  # Widget demo server
+    "http://127.0.0.1:8080",  # Widget demo server
     "https://hawaii.lenilani.com",  # Main website
     "https://www.hawaii.lenilani.com",  # WWW variant
     "https://lenilani.com",  # Alternative domain
@@ -88,6 +91,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Serve static files (widget.js)
+import os
+public_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "public")
+if os.path.exists(public_dir):
+    app.mount("/public", StaticFiles(directory=public_dir), name="public")
+    
+    # Serve widget.js at root level for convenience
+    @app.get("/widget.js")
+    async def serve_widget():
+        # Serve the full Hawaiian widget
+        widget_path = os.path.join(public_dir, "hawaiian-widget.js")
+        if os.path.exists(widget_path):
+            return FileResponse(widget_path, media_type="application/javascript")
+        # Fallback to simple widget
+        widget_path = os.path.join(public_dir, "widget.js")
+        if os.path.exists(widget_path):
+            return FileResponse(widget_path, media_type="application/javascript")
+        raise HTTPException(status_code=404, detail="Widget not found")
 
 
 # Request/Response Models

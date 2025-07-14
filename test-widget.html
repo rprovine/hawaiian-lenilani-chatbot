@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Widget Test</title>
+</head>
+<body>
+    <h1>Testing Widget</h1>
+    <p>You should see a chat bubble in the bottom-right corner.</p>
+    
+    <script>
+        console.log('Setting API URL...');
+        window.LENILANI_CHATBOT_URL = 'http://localhost:8000';
+    </script>
+    
+    <script src="http://localhost:8000/widget.js" 
+            onload="console.log('Widget loaded successfully!')" 
+            onerror="console.error('Failed to load widget!')"></script>
+    
+    <p>Check the browser console (F12) for any errors.</p>
+</body>
+</html>

@@ -1,16 +1,13 @@
 services:
-  # Backend API Service
   - type: web
-    name: hawaiian-lenilani-chatbot
-    env: python
+    name: hawaiian-chatbot-api
+    runtime: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python run_backend.py"
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.11
       - key: ANTHROPIC_API_KEY
         sync: false
       - key: LEAD_WEBHOOK_URL
         sync: false
-      - key: LEAD_EMAIL
-        value: reno@lenilani.com
