@@ -54,16 +54,33 @@ class LeadCaptureService:
             Status of lead capture
         """
         try:
+            logger.info(f"Attempting to capture lead with data: {lead_data}")
+            
             # Enrich lead data
             enriched_lead = self._enrich_lead_data(lead_data, conversation_summary, qualification_score)
+            logger.info(f"Enriched lead data: {enriched_lead}")
             
             # Send via email
             email_sent = await self._send_email_notification(enriched_lead)
+            logger.info(f"Email sent status: {email_sent}")
             
             # Send to HubSpot if configured
             hubspot_sent = False
             if self.hubspot_api_key:
                 hubspot_sent = await self._send_to_hubspot(enriched_lead)
+            
+            # Send to webhook if configured
+            webhook_sent = False
+            try:
+                from .webhook_lead_capture import WebhookLeadCapture, create_zapier_friendly_lead
+                webhook_service = WebhookLeadCapture()
+                zapier_lead = create_zapier_friendly_lead(enriched_lead)
+                webhook_result = await webhook_service.send_lead(zapier_lead)
+                webhook_sent = webhook_result.get("success", False)
+                if webhook_sent:
+                    logger.info("Lead sent to webhook successfully")
+            except Exception as e:
+                logger.warning(f"Webhook send failed: {str(e)}")
             
             # Log the lead locally
             self._log_lead(enriched_lead)
@@ -77,7 +94,7 @@ class LeadCaptureService:
             }
             
         except Exception as e:
-            logger.error(f"Error capturing lead: {str(e)}")
+            logger.error(f"Error capturing lead: {str(e)}", exc_info=True)
             return {
                 "success": False,
                 "error": str(e),
@@ -116,8 +133,11 @@ class LeadCaptureService:
     async def _send_email_notification(self, lead_data: Dict[str, Any]) -> bool:
         """Send email notification to Reno"""
         try:
+            logger.info(f"Email config - SMTP User: {self.smtp_user}, Has password: {bool(self.smtp_password)}")
+            
             if not self.smtp_user or not self.smtp_password:
                 logger.warning("Email not configured, skipping email notification")
+                logger.info(f"SMTP_USER: {self.smtp_user}, SMTP_PASSWORD exists: {bool(self.smtp_password)}")
                 return False
             
             # Create email
