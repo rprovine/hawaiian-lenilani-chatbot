@@ -186,7 +186,9 @@ class HawaiianConversationRouter:
                 "conversation_history": [],
                 "business_context": {},
                 "conversation_stage": "greeting",
-                "has_greeted": False
+                "has_greeted": False,
+                "lead_data": {},  # Store accumulated lead data
+                "lead_captured": False  # Track if we've already sent this lead
             }
         
         return self.sessions[session_id]
@@ -283,38 +285,91 @@ class HawaiianConversationRouter:
         return context
     
     def _extract_lead_info(self, message: str, conversation_history: List[Dict], session: Dict) -> Optional[Dict]:
-        """Extract lead information from conversation"""
+        """Extract and accumulate lead information from conversation"""
+        # Get existing lead data from session
+        existing_lead_data = session.get("lead_data", {})
+        updated = False
+        
         # Look for email
         email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         email_match = re.search(email_pattern, message)
+        if email_match and not existing_lead_data.get("email"):
+            existing_lead_data["email"] = email_match.group()
+            updated = True
+            logger.info(f"Found email: {email_match.group()}")
         
         # Look for phone
         phone_pattern = r'(\d{3}[-.\s]?\d{3}[-.\s]?\d{4}|\(\d{3}\)\s*\d{3}[-.\s]?\d{4})'
         phone_match = re.search(phone_pattern, message)
+        if phone_match and not existing_lead_data.get("phone"):
+            existing_lead_data["phone"] = phone_match.group()
+            updated = True
+            logger.info(f"Found phone: {phone_match.group()}")
         
-        # Check if we have enough info to create a lead
-        if email_match or phone_match or len(conversation_history) > 6:
-            lead_info = {
-                "email": email_match.group() if email_match else None,
-                "phone": phone_match.group() if phone_match else None,
-                "business_type": session.get("business_context", {}).get("business_type"),
-                "location": session.get("business_context", {}).get("island"),
-                "main_challenge": session.get("business_context", {}).get("challenge"),
-                "message_count": len(conversation_history) // 2
-            }
-            
-            # Extract name if mentioned
-            name_patterns = [
-                r"(?:my name is|i'm|i am|this is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)",
-                r"^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+here"
-            ]
-            for pattern in name_patterns:
-                name_match = re.search(pattern, message, re.IGNORECASE)
-                if name_match:
-                    lead_info["name"] = name_match.group(1)
+        # Extract name if mentioned
+        name_patterns = [
+            r"(?:my name is|i'm|i am|this is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)",
+            r"^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+here"
+        ]
+        for pattern in name_patterns:
+            name_match = re.search(pattern, message, re.IGNORECASE)
+            if name_match and not existing_lead_data.get("name"):
+                existing_lead_data["name"] = name_match.group(1)
+                updated = True
+                logger.info(f"Found name: {name_match.group(1)}")
+                break
+        
+        # Extract company name if mentioned
+        company_patterns = [
+            r"(?:company|business|organization|firm|store|restaurant|hotel|shop)\s+(?:is |called |named )?([A-Z][A-Za-z\s&']+?)(?=\s|$|\.)",
+            r"(?:from|with|at|represent(?:ing)?|own(?:er of)?|work for)\s+([A-Z][A-Za-z\s&']+?)(?:\s+(?:company|business|organization|firm|store|restaurant|hotel|shop))?(?=\s|$|\.)",
+            r"([A-Z][A-Za-z\s&']+?)\s+(?:company|business|organization|firm|store|restaurant|hotel|shop)(?=\s|$|\.)",
+            r"(?:I own|we own|I run|we run|I manage|we manage)\s+([A-Z][A-Za-z\s&']+?)(?=\s|$|\.)"
+        ]
+        for pattern in company_patterns:
+            company_match = re.search(pattern, message, re.IGNORECASE)
+            if company_match and not existing_lead_data.get("company"):
+                company_name = company_match.group(1).strip()
+                # Filter out common false positives and clean up
+                if (company_name.lower() not in ["my", "our", "the", "a", "an", "this", "that"] and 
+                    len(company_name) > 2):
+                    existing_lead_data["company"] = company_name
+                    updated = True
+                    logger.info(f"Found company: {company_name}")
                     break
-            
-            return lead_info
+        
+        # Update business context information
+        business_context = session.get("business_context", {})
+        if business_context.get("business_type") and not existing_lead_data.get("business_type"):
+            existing_lead_data["business_type"] = business_context["business_type"]
+            updated = True
+        if business_context.get("island") and not existing_lead_data.get("location"):
+            existing_lead_data["location"] = business_context["island"]
+            updated = True
+        if business_context.get("challenge") and not existing_lead_data.get("main_challenge"):
+            existing_lead_data["main_challenge"] = business_context["challenge"]
+            updated = True
+        
+        # Always update message count
+        existing_lead_data["message_count"] = len(conversation_history) // 2
+        
+        # Store updated lead data back in session
+        session["lead_data"] = existing_lead_data
+        
+        # Determine if we should capture the lead now
+        # We need at least email OR phone, plus some context
+        has_contact = existing_lead_data.get("email") or existing_lead_data.get("phone")
+        has_context = (existing_lead_data.get("name") or 
+                      existing_lead_data.get("company") or 
+                      existing_lead_data.get("business_type") or
+                      existing_lead_data.get("message_count", 0) >= 3)
+        
+        # Only return lead data if we have enough info AND haven't captured yet
+        if has_contact and has_context and not session.get("lead_captured", False):
+            logger.info(f"Ready to capture lead with data: {existing_lead_data}")
+            return existing_lead_data
+        elif updated:
+            logger.info(f"Updated lead data but not ready to capture yet. Current data: {existing_lead_data}")
         
         return None
     
@@ -338,6 +393,9 @@ class HawaiianConversationRouter:
             
             if result["success"]:
                 logger.info(f"Lead captured successfully: {result['lead_id']}")
+                # Mark lead as captured in session to prevent duplicates
+                session["lead_captured"] = True
+                session["lead_id"] = result['lead_id']
             else:
                 logger.error(f"Failed to capture lead: {result.get('error')}")
                 
@@ -434,3 +492,42 @@ class HawaiianConversationRouter:
                 "Talk to someone",
                 "View examples"
             ]
+    
+    async def end_session(self, session_id: str) -> Dict[str, Any]:
+        """End a session and capture any remaining lead data"""
+        try:
+            if session_id not in self.sessions:
+                return {"success": False, "message": "Session not found"}
+            
+            session = self.sessions[session_id]
+            
+            # If we have lead data that hasn't been captured yet, capture it now
+            if session.get("lead_data") and not session.get("lead_captured", False):
+                lead_data = session["lead_data"]
+                
+                # Check if we have at least some contact info
+                if lead_data.get("email") or lead_data.get("phone"):
+                    logger.info(f"Capturing lead data at session end: {lead_data}")
+                    await self._capture_lead(lead_data, session)
+            
+            # Clean up session
+            del self.sessions[session_id]
+            
+            return {"success": True, "message": "Session ended successfully"}
+            
+        except Exception as e:
+            logger.error(f"Error ending session: {str(e)}")
+            return {"success": False, "error": str(e)}
+    
+    def get_session_lead_data(self, session_id: str) -> Dict[str, Any]:
+        """Get current lead data for a session (for debugging)"""
+        if session_id not in self.sessions:
+            return {"error": "Session not found"}
+        
+        session = self.sessions[session_id]
+        return {
+            "lead_data": session.get("lead_data", {}),
+            "lead_captured": session.get("lead_captured", False),
+            "lead_id": session.get("lead_id"),
+            "message_count": len(session.get("conversation_history", [])) // 2
+        }

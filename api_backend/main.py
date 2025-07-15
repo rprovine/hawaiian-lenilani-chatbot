@@ -414,6 +414,18 @@ async def health_check():
     )
 
 
+@app.get("/session/{session_id}/lead-data")
+async def get_session_lead_data(session_id: str):
+    """Get current lead data for a session (debugging endpoint)"""
+    return conversation_router.get_session_lead_data(session_id)
+
+
+@app.post("/session/{session_id}/end")
+async def end_session(session_id: str):
+    """End a session and capture any remaining lead data"""
+    return await conversation_router.end_session(session_id)
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(message: ChatMessage, request: Request):
     """Main chat endpoint for Hawaiian business conversations"""

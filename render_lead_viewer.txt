@@ -1,0 +1,107 @@
+cat > lead_viewer.py << 'ENDSCRIPT'
+import json
+import glob
+import os
+from datetime import datetime
+
+print("\n" + "="*60)
+print("🌺 Hawaiian Chatbot - Lead Report")
+print("="*60)
+print("Generated:", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+# Ensure directories exist
+os.makedirs("logs/leads", exist_ok=True)
+
+# Get all lead files
+lead_files = sorted(glob.glob("logs/leads/lead_*.json"), reverse=True)
+
+if not lead_files:
+    print("\n❌ No leads found!")
+    print("\nTroubleshooting:")
+    print("1. Make sure the deployment has completed")
+    print("2. Check that users have provided contact info")
+    print("3. Try: ls -la logs/leads/")
+else:
+    print(f"\n✅ Found {len(lead_files)} leads\n")
+    
+    # Stats counters
+    hot = 0
+    warm = 0
+    cold = 0
+    
+    # Display each lead
+    for i, lead_file in enumerate(lead_files):
+        try:
+            with open(lead_file, "r") as f:
+                lead = json.load(f)
+            
+            print(f"\n{'='*60}")
+            print(f"📋 Lead #{i + 1}")
+            print("="*60)
+            
+            # Basic info
+            print(f"🆔 ID: {lead.get('lead_id', 'Unknown')}")
+            print(f"📅 Date: {lead.get('captured_at', 'Unknown')}")
+            print(f"⭐ Score: {lead.get('qualification_score', 0)}/100")
+            print(f"🔥 Quality: {lead.get('lead_quality', 'Unknown')}")
+            
+            # Contact info
+            print(f"\n👤 Contact Information:")
+            print(f"   Name: {lead.get('name', '-')}")
+            print(f"   Email: {lead.get('email', '-')}")
+            print(f"   Phone: {lead.get('phone', '-')}")
+            print(f"   Company: {lead.get('company', '-')}")
+            
+            # Business info
+            print(f"\n🏢 Business Details:")
+            print(f"   Type: {lead.get('business_type', '-')}")
+            print(f"   Location: {lead.get('location', '-')}")
+            print(f"   Challenge: {lead.get('main_challenge', '-')}")
+            print(f"   Budget: {lead.get('budget_range', '-')}")
+            
+            # Summary
+            if lead.get("conversation_summary"):
+                print(f"\n💬 Summary: {lead.get('conversation_summary')}")
+            
+            # Count quality
+            quality = lead.get("lead_quality", "")
+            if "HOT" in quality: hot += 1
+            elif "WARM" in quality: warm += 1
+            else: cold += 1
+            
+        except Exception as e:
+            print(f"\n⚠️ Error reading {lead_file}: {e}")
+    
+    # Display summary
+    print(f"\n\n{'='*60}")
+    print("📊 LEAD SUMMARY")
+    print("="*60)
+    print(f"📈 Total Leads: {len(lead_files)}")
+    print(f"\n🎯 Lead Quality:")
+    print(f"   🔥 Hot: {hot}")
+    print(f"   🌡️  Warm: {warm}")
+    print(f"   ❄️  Cold: {cold}")
+    
+    # Calculate average score
+    total_score = 0
+    count = 0
+    for lead_file in lead_files:
+        try:
+            with open(lead_file, "r") as f:
+                lead = json.load(f)
+                score = lead.get("qualification_score", 0)
+                if score > 0:
+                    total_score += score
+                    count += 1
+        except:
+            pass
+    
+    if count > 0:
+        avg_score = total_score / count
+        print(f"\n⭐ Average Score: {avg_score:.1f}/100")
+
+print("\n✅ Report complete!")
+print("="*60)
+ENDSCRIPT
+
+python lead_viewer.py
