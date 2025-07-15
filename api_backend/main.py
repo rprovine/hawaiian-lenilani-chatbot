@@ -145,6 +145,14 @@ if os.path.exists(public_dir):
         if os.path.exists(admin_path):
             return FileResponse(admin_path, media_type="text/html")
         raise HTTPException(status_code=404, detail="Admin interface not found")
+    
+    # Serve lead viewer instructions
+    @app.get("/view-leads")
+    async def serve_lead_viewer():
+        viewer_path = os.path.join(public_dir, "view-leads.html")
+        if os.path.exists(viewer_path):
+            return FileResponse(viewer_path, media_type="text/html")
+        raise HTTPException(status_code=404, detail="Lead viewer not found")
 
 
 # Request/Response Models

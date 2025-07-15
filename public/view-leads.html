@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Viewer - Hawaiian AI Chatbot</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0081a7;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .steps {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background: #263238;
+            color: #aed581;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .lead-example {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌺 Lead Viewer Instructions</h1>
+        
+        <div class="info">
+            <h2>📊 Your leads ARE being captured!</h2>
+            <p>The chatbot saves lead information when users provide:</p>
+            <ul>
+                <li>Email addresses</li>
+                <li>Phone numbers</li>
+                <li>Business information</li>
+            </ul>
+        </div>
+        
+        <h2>🔍 How to Access Your Leads</h2>
+        
+        <div class="steps">
+            <h3>Option 1: Render Dashboard (Recommended)</h3>
+            <ol>
+                <li>Go to <a href="https://dashboard.render.com" target="_blank">Render Dashboard</a></li>
+                <li>Click on your <strong>hawaiian-lenilani-chatbot</strong> service</li>
+                <li>Click on the <strong>"Shell"</strong> tab</li>
+                <li>Run these commands:</li>
+            </ol>
+            <pre>
+# See all lead files
+ls logs/leads/
+
+# View all leads in readable format
+python -m json.tool logs/leads/*.json
+
+# Count total leads
+ls logs/leads/*.json | wc -l
+
+# View most recent lead
+ls -t logs/leads/*.json | head -1 | xargs cat | python -m json.tool</pre>
+        </div>
+        
+        <div class="steps">
+            <h3>Option 2: Download Lead Script</h3>
+            <p>Save this Python script as <code>download_leads.py</code> on your computer:</p>
+            <pre>
+import subprocess
+import json
+from datetime import datetime
+
+# SSH into Render and get leads
+cmd = 'ssh your-render-service "cat logs/leads/*.json"'
+# Note: You'll need to set up SSH keys with Render first
+
+# For now, use Render Shell manually and copy the output</pre>
+        </div>
+        
+        <div class="steps">
+            <h3>Option 3: Set Up Email Notifications</h3>
+            <p>Add these to your Render environment variables:</p>
+            <pre>
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+ADMIN_EMAIL=your-email@gmail.com</pre>
+            <p>Then leads will be emailed to you automatically!</p>
+        </div>
+        
+        <h2>📋 Lead Format Example</h2>
+        <div class="lead-example">
+            <pre>{
+    "lead_id": "lead_20250715_085134",
+    "captured_at": "2025-07-15T08:51:34.791334-10:00",
+    "qualification_score": 85,
+    "lead_quality": "🔥 HOT - Ready to buy",
+    "name": "Mike Tanaka",
+    "email": "mike@example.com",
+    "phone": "808-555-1234",
+    "company": "Tanaka Tours",
+    "business_type": "Tourism",
+    "location": "Maui",
+    "main_challenge": "Online booking system",
+    "budget_range": "$5,000-$15,000",
+    "conversation_summary": "Tour company owner needs booking system..."
+}</pre>
+        </div>
+        
+        <h2>💡 Pro Tips</h2>
+        <ul>
+            <li>Leads are stored in <code>logs/leads/</code> directory</li>
+            <li>Each lead is a separate JSON file</li>
+            <li>Files are named with timestamp for easy sorting</li>
+            <li>The system captures leads automatically - no action needed</li>
+        </ul>
+        
+        <div class="info">
+            <h3>🚀 Coming Soon</h3>
+            <p>We're working on a web-based admin dashboard. For now, use the Render Shell method above.</p>
+        </div>
+    </div>
+</body>
+</html>
