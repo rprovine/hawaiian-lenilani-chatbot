@@ -216,10 +216,19 @@ async def root(request: Request):
         })
     
     # Serve the full landing page
-    landing_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "landing-page.html")
+    # Try public directory first (more reliable in Docker)
+    landing_path = os.path.join(public_dir, "landing-page.html")
+    logger.info(f"Looking for landing page at: {landing_path}")
+    logger.info(f"File exists: {os.path.exists(landing_path)}")
+    
     if os.path.exists(landing_path):
-        with open(landing_path, 'r', encoding='utf-8') as f:
-            return HTMLResponse(content=f.read())
+        try:
+            with open(landing_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                logger.info(f"Successfully loaded landing page, size: {len(content)} bytes")
+                return HTMLResponse(content=content)
+        except Exception as e:
+            logger.error(f"Error reading landing page: {e}")
     
     # Fallback to simple landing page if file not found
     return HTMLResponse(content="""

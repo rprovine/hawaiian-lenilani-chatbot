@@ -38,6 +38,9 @@ docs/
 .github/
 .gitignore
 
+# But include the landing page
+!landing-page.html
+
 # Build files
 dist/
 build/
