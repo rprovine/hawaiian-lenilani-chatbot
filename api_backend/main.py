@@ -25,6 +25,7 @@ from services.island_business_intelligence import IslandBusinessIntelligence
 from services.hawaiian_timezone_handler import HawaiianTimezoneHandler
 from config.hawaiian_cultural_config import HAWAIIAN_CONFIG
 from config.island_business_config import ISLAND_BUSINESS_CONFIG
+from services.startup_tasks import run_startup_tasks
 try:
     from . import admin_routes
 except ImportError:
@@ -52,6 +53,10 @@ async def lifespan(app: FastAPI):
     """Manage application lifecycle"""
     # Startup
     logger.info("🌺 Starting Hawaiian LeniLani Chatbot API...")
+    
+    # Run startup tasks (create directories, etc.)
+    run_startup_tasks()
+    
     logger.info(f"🏝️ Hawaii Time: {timezone_handler.get_current_hawaii_time()}")
     logger.info("🤙 Aloha! Ready to serve Hawaiian businesses!")
     

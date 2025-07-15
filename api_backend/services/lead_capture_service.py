@@ -300,12 +300,46 @@ class LeadCaptureService:
         """Log lead information locally"""
         try:
             log_dir = "logs/leads"
-            os.makedirs(log_dir, exist_ok=True)
+            
+            # Try to create directory with detailed error handling
+            try:
+                os.makedirs(log_dir, exist_ok=True)
+                logger.info(f"Directory ensured: {log_dir}")
+            except Exception as mkdir_error:
+                logger.error(f"Failed to create directory {log_dir}: {str(mkdir_error)}")
+                # Try alternative approach
+                try:
+                    # Create parent first
+                    os.makedirs("logs", exist_ok=True)
+                    os.makedirs(log_dir, exist_ok=True)
+                except Exception as alt_error:
+                    logger.error(f"Alternative directory creation failed: {str(alt_error)}")
+                    raise
+            
+            # Verify directory exists
+            if not os.path.exists(log_dir):
+                logger.error(f"Directory {log_dir} does not exist after creation attempt")
+                raise Exception(f"Directory {log_dir} could not be created")
             
             log_file = os.path.join(log_dir, f"{lead_data.get('lead_id')}.json")
-            with open(log_file, 'w') as f:
-                json.dump(lead_data, f, indent=2)
             
-            logger.info(f"Lead logged to {log_file}")
+            # Write file with explicit error handling
+            try:
+                with open(log_file, 'w') as f:
+                    json.dump(lead_data, f, indent=2)
+                logger.info(f"Lead successfully logged to {log_file}")
+                
+                # Verify file was written
+                if os.path.exists(log_file):
+                    file_size = os.path.getsize(log_file)
+                    logger.info(f"Lead file created: {log_file} (size: {file_size} bytes)")
+                else:
+                    logger.error(f"Lead file not found after write: {log_file}")
+                    
+            except Exception as write_error:
+                logger.error(f"Failed to write lead file {log_file}: {str(write_error)}")
+                raise
+                
         except Exception as e:
-            logger.error(f"Failed to log lead: {str(e)}")
+            logger.error(f"Failed to log lead: {str(e)}", exc_info=True)
+            # Don't re-raise - we don't want to fail the whole lead capture just because of logging
