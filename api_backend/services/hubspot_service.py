@@ -54,6 +54,12 @@ class HubSpotService:
             "hs_lead_status": "NEW",
             "lifecyclestage": "lead",
             
+            # Lead source tracking for reporting
+            "leadsource": "Hawaiian AI Chatbot",
+            "hs_analytics_source": "OTHER",
+            "hs_analytics_source_data_1": "Hawaiian AI Chatbot",
+            "hs_analytics_source_data_2": "Lenilani.com",
+            
             # Standard properties only - notes will be added separately
         }
         
