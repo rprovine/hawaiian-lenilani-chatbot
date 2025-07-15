@@ -47,27 +47,15 @@ class HubSpotService:
             "jobtitle": contact_data.get("job_title", "Business Owner"),
             "website": contact_data.get("website", ""),
             
-            # Hawaiian-specific custom properties
-            "island_location": contact_data.get("island", ""),
-            "business_type_hawaii": contact_data.get("business_type", ""),
-            "lead_source": "Hawaiian AI Chatbot - Reno Provine (reno@lenilani.com)",
-            "preferred_language": "English/Hawaiian Pidgin",
+            # Use standard properties and notes field for custom data
+            # "island_location": contact_data.get("island", ""),  # Custom property - commented out
+            # "business_type_hawaii": contact_data.get("business_type", ""),  # Custom property - commented out
+            # "lead_source": "Hawaiian AI Chatbot - Reno Provine (reno@lenilani.com)",  # Custom property - commented out
+            "hs_lead_status": "NEW",
+            "lifecyclestage": "lead",
             
-            # Business context
-            "primary_challenge": contact_data.get("primary_challenge", ""),
-            "budget_range": contact_data.get("budget_range", ""),
-            "timeline": contact_data.get("timeline", ""),
-            "number_of_employees": str(contact_data.get("company_size", "")),
-            
-            # Engagement tracking
-            "first_conversation_date": datetime.now().strftime("%Y-%m-%d"),
-            "chatbot_conversation_count": "1",
-            "lead_score": str(self._calculate_lead_score(contact_data)),
-            
-            # Cultural context
-            "market_focus": contact_data.get("market_focus", "Mixed"),
-            "sustainability_interest": "Yes" if contact_data.get("values_sustainability") else "No",
-            "cultural_alignment": self._calculate_cultural_fit(contact_data)
+            # Add business context to notes instead of custom fields
+            "hs_content_membership_notes": self._build_contact_notes(contact_data)
         }
         
         # Remove None values
@@ -120,14 +108,7 @@ class HubSpotService:
             "dealstage": "appointmentscheduled",  # Initial stage
             "closedate": self._calculate_close_date(deal_data.get("timeline", "")),
             
-            # Custom properties
-            "island_location": deal_data.get("island", ""),
-            "business_type": deal_data.get("business_type", ""),
-            "primary_service": deal_data.get("primary_service", "AI Consulting"),
-            "implementation_timeline": deal_data.get("timeline", ""),
-            "lead_source": "Hawaiian AI Chatbot - Reno Provine (reno@lenilani.com)",
-            
-            # Deal description
+            # Deal description includes all custom data that doesn't have fields
             "description": self._build_deal_description(deal_data)
         }
         
@@ -432,6 +413,59 @@ Contact: Reno Provine - reno@lenilani.com - 808-766-1164
 Next Steps: Schedule talk story session to discuss specific needs
 
 Generated from authentic Hawaiian business conversation."""
+
+    def _build_contact_notes(self, contact_data: Dict[str, Any]) -> str:
+        """Build contact notes with custom field data that doesn't exist in HubSpot"""
+        
+        notes_parts = []
+        
+        # Add lead source
+        notes_parts.append("Lead Source: Hawaiian AI Chatbot - Reno Provine (reno@lenilani.com)")
+        
+        # Add business type if available
+        business_type = contact_data.get("business_type")
+        if business_type:
+            notes_parts.append(f"Business Type: {business_type}")
+        
+        # Add island location if available
+        island = contact_data.get("island")
+        if island:
+            notes_parts.append(f"Island Location: {island}")
+        
+        # Add primary challenge if available
+        primary_challenge = contact_data.get("primary_challenge")
+        if primary_challenge:
+            notes_parts.append(f"Primary Challenge: {primary_challenge}")
+        
+        # Add budget range if available
+        budget_range = contact_data.get("budget_range")
+        if budget_range:
+            notes_parts.append(f"Budget Range: {budget_range}")
+        
+        # Add timeline if available
+        timeline = contact_data.get("timeline")
+        if timeline:
+            notes_parts.append(f"Timeline: {timeline}")
+        
+        # Add values/cultural fit
+        cultural_values = []
+        if contact_data.get("values_sustainability"):
+            cultural_values.append("Values Sustainability")
+        if contact_data.get("local_focus"):
+            cultural_values.append("Local Focus")
+        if contact_data.get("community_minded"):
+            cultural_values.append("Community Minded")
+        
+        if cultural_values:
+            notes_parts.append(f"Cultural Values: {', '.join(cultural_values)}")
+        
+        # Add lead score if available
+        lead_score = self._calculate_lead_score(contact_data)
+        cultural_fit = self._calculate_cultural_fit(contact_data)
+        notes_parts.append(f"Lead Score: {lead_score}/100")
+        notes_parts.append(f"Cultural Fit: {cultural_fit}")
+        
+        return "\n".join(notes_parts)
 
 
 # Create global instance

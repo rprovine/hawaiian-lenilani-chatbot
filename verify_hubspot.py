@@ -65,9 +65,8 @@ test_contact = {
         "company": "Test Company",
         "phone": "808-555-0000",
         "hs_lead_status": "NEW",
-        "island_location": "Oahu",
-        "business_type_hawaii": "Test Business",
-        "lead_source": "Hawaiian AI Chatbot Test"
+        "lifecyclestage": "lead",
+        "hs_content_membership_notes": "Lead Source: Hawaiian AI Chatbot Test\nIsland Location: Oahu\nBusiness Type: Test Business"
     }
 }
 
