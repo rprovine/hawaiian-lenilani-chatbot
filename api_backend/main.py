@@ -25,7 +25,10 @@ from services.island_business_intelligence import IslandBusinessIntelligence
 from services.hawaiian_timezone_handler import HawaiianTimezoneHandler
 from config.hawaiian_cultural_config import HAWAIIAN_CONFIG
 from config.island_business_config import ISLAND_BUSINESS_CONFIG
-from api_backend import admin_routes
+try:
+    from . import admin_routes
+except ImportError:
+    import admin_routes
 
 # Load environment variables
 load_dotenv()
