@@ -25,6 +25,7 @@ from services.island_business_intelligence import IslandBusinessIntelligence
 from services.hawaiian_timezone_handler import HawaiianTimezoneHandler
 from config.hawaiian_cultural_config import HAWAIIAN_CONFIG
 from config.island_business_config import ISLAND_BUSINESS_CONFIG
+from api_backend import admin_routes
 
 # Load environment variables
 load_dotenv()
@@ -133,6 +134,14 @@ if os.path.exists(public_dir):
         if os.path.exists(logo_path):
             return FileResponse(logo_path, media_type="image/webp")
         raise HTTPException(status_code=404, detail="Logo not found")
+    
+    # Serve admin interface
+    @app.get("/admin")
+    async def serve_admin():
+        admin_path = os.path.join(public_dir, "admin.html")
+        if os.path.exists(admin_path):
+            return FileResponse(admin_path, media_type="text/html")
+        raise HTTPException(status_code=404, detail="Admin interface not found")
 
 
 # Request/Response Models
@@ -202,6 +211,9 @@ class ConnectionManager:
 
 
 manager = ConnectionManager()
+
+# Include admin routes
+app.include_router(admin_routes.router)
 
 
 # API Endpoints
