@@ -113,6 +113,16 @@ class HawaiianConversationRouter:
             business_context['message_count'] = len(conversation_history) // 2  # Rough count of exchanges
             business_context['conversation_history'] = conversation_history[-6:]  # Last 3 exchanges for context
             
+            # Add lead data status so Claude knows what to ask for
+            business_context['lead_data'] = {
+                "has_name": bool(session.get("lead_data", {}).get("name")),
+                "has_email": bool(session.get("lead_data", {}).get("email")),
+                "has_phone": bool(session.get("lead_data", {}).get("phone")),
+                "has_company": bool(session.get("lead_data", {}).get("company")),
+                "name": session.get("lead_data", {}).get("name"),
+                "company": session.get("lead_data", {}).get("company")
+            }
+            
             # Add business categories context
             business_context['categories'] = HAWAIIAN_BUSINESS_CATEGORIES
             business_context['quick_select'] = CATEGORY_QUICK_SELECT
