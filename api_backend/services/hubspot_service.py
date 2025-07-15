@@ -54,8 +54,7 @@ class HubSpotService:
             "hs_lead_status": "NEW",
             "lifecyclestage": "lead",
             
-            # Add business context to notes instead of custom fields
-            "hs_content_membership_notes": self._build_contact_notes(contact_data)
+            # Standard properties only - notes will be added separately
         }
         
         # Remove None values
@@ -72,6 +71,11 @@ class HubSpotService:
                     response = self._update_contact(contact_id, properties)
                     if response:
                         logger.info(f"Updated HubSpot contact: {contact_id}")
+                        
+                        # Create note with business context
+                        note_content = self._build_contact_notes(contact_data)
+                        self._create_note(contact_id, note_content)
+                        
                         return {"success": True, "contact_id": contact_id, "action": "updated"}
                 
             # Create new contact
@@ -79,6 +83,11 @@ class HubSpotService:
             if response:
                 contact_id = response.get("id")
                 logger.info(f"Created HubSpot contact: {contact_id}")
+                
+                # Create note with business context
+                note_content = self._build_contact_notes(contact_data)
+                self._create_note(contact_id, note_content)
+                
                 return {"success": True, "contact_id": contact_id, "action": "created"}
                 
         except Exception as e:
@@ -414,6 +423,48 @@ Next Steps: Schedule talk story session to discuss specific needs
 
 Generated from authentic Hawaiian business conversation."""
 
+    def _create_note(self, contact_id: str, note_content: str) -> bool:
+        """Create a note (engagement) for a contact"""
+        
+        try:
+            # Create note using the Notes API
+            url = f"{self.base_url}/crm/v3/objects/notes"
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "properties": {
+                    "hs_note_body": note_content,
+                    "hs_timestamp": str(int(datetime.now().timestamp() * 1000))
+                },
+                "associations": [
+                    {
+                        "to": {"id": contact_id},
+                        "types": [
+                            {
+                                "associationCategory": "HUBSPOT_DEFINED",
+                                "associationTypeId": 202  # Note to contact association
+                            }
+                        ]
+                    }
+                ]
+            }
+            
+            response = requests.post(url, headers=headers, json=payload)
+            
+            if response.status_code == 201:
+                logger.info(f"Created note for contact {contact_id}")
+                return True
+            else:
+                logger.error(f"Failed to create note: {response.status_code} - {response.text}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Error creating note: {str(e)}")
+            return False
+    
     def _build_contact_notes(self, contact_data: Dict[str, Any]) -> str:
         """Build contact notes with custom field data that doesn't exist in HubSpot"""
         
