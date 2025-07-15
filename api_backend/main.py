@@ -215,7 +215,13 @@ async def root(request: Request):
             "greeting": greeting
         })
     
-    # Otherwise, serve the landing page
+    # Serve the full landing page
+    landing_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "landing-page.html")
+    if os.path.exists(landing_path):
+        with open(landing_path, 'r', encoding='utf-8') as f:
+            return HTMLResponse(content=f.read())
+    
+    # Fallback to simple landing page if file not found
     return HTMLResponse(content="""
 <!DOCTYPE html>
 <html lang="en">
