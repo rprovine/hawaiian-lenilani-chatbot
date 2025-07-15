@@ -247,40 +247,59 @@ class LeadCaptureService:
             return False
     
     async def _create_hubspot_contact(self, lead_data: Dict[str, Any]) -> bool:
-        """Create contact using HubSpot Contacts API"""
+        """Create HubSpot contact using the HubSpot service"""
         try:
-            headers = {
-                "Authorization": f"Bearer {self.hubspot_api_key}",
-                "Content-Type": "application/json"
-            }
+            from api_backend.services.hubspot_service import hubspot_service
             
+            # Prepare contact data for HubSpot service
             contact_data = {
-                "properties": {
-                    "email": lead_data.get("email", ""),
-                    "firstname": lead_data.get("name", "").split()[0] if lead_data.get("name") else "",
-                    "lastname": " ".join(lead_data.get("name", "").split()[1:]) if lead_data.get("name") and len(lead_data.get("name", "").split()) > 1 else "",
-                    "phone": lead_data.get("phone", ""),
-                    "company": lead_data.get("company", ""),
-                    "hs_lead_status": "NEW",
-                    "lead_source": "Leni Begonia Chatbot",
-                    "business_type": lead_data.get("business_type", ""),
-                    "main_challenge": lead_data.get("main_challenge", ""),
-                    "lead_quality_score": str(lead_data.get("qualification_score", 0))
-                }
+                "email": lead_data.get("email"),
+                "first_name": lead_data.get("name", "").split()[0] if lead_data.get("name") else "",
+                "last_name": " ".join(lead_data.get("name", "").split()[1:]) if lead_data.get("name") and len(lead_data.get("name", "").split()) > 1 else "",
+                "phone": lead_data.get("phone"),
+                "company_name": lead_data.get("company"),
+                "business_type": lead_data.get("business_type"),
+                "island": lead_data.get("location"),
+                "primary_challenge": lead_data.get("main_challenge"),
+                "budget_range": lead_data.get("budget_range"),
+                "timeline": lead_data.get("timeline", "Not specified"),
+                "values_sustainability": lead_data.get("values_sustainability", False),
+                "local_focus": lead_data.get("local_focus", True),
+                "community_minded": lead_data.get("community_minded", True),
             }
             
-            response = requests.post(
-                "https://api.hubapi.com/crm/v3/objects/contacts",
-                headers=headers,
-                json=contact_data
-            )
-            response.raise_for_status()
+            # Create or update contact
+            result = hubspot_service.create_or_update_contact(contact_data)
             
-            logger.info(f"HubSpot contact created: {response.json().get('id')}")
-            return True
-            
+            if result.get("success"):
+                logger.info(f"Lead sent to HubSpot successfully: {lead_data.get('lead_id')} - Contact ID: {result.get('contact_id')}")
+                
+                # If high score, also create a deal
+                if lead_data.get("qualification_score", 0) >= 70:
+                    deal_data = {
+                        "company_name": lead_data.get("company", "Hawaiian Business"),
+                        "services": ["AI Chatbot", "Consulting"],
+                        "timeline": lead_data.get("timeline", "Not specified"),
+                        "island": lead_data.get("location"),
+                        "business_type": lead_data.get("business_type"),
+                        "primary_service": "AI Solutions"
+                    }
+                    
+                    deal_result = hubspot_service.create_deal(
+                        result.get("contact_id"),
+                        deal_data
+                    )
+                    
+                    if deal_result.get("success"):
+                        logger.info(f"Deal created in HubSpot: {deal_result.get('deal_id')}")
+                
+                return True
+            else:
+                logger.error(f"Failed to create HubSpot contact: {result.get('error')}")
+                return False
+                
         except Exception as e:
-            logger.error(f"Failed to create HubSpot contact: {str(e)}")
+            logger.error(f"Error creating HubSpot contact: {str(e)}")
             return False
     
     def _get_follow_up_recommendation(self, lead_data: Dict[str, Any]) -> str:
