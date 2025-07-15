@@ -78,6 +78,8 @@ default_origins = [
     "https://www.lenilani.com",  # WWW variant
     "https://chat.lenilani.com",  # Chat subdomain
     "https://api.lenilani.com",  # API subdomain
+    "https://hawaiian-ai-chatbot.lenilani.com",  # Landing page subdomain
+    "https://www.hawaiian-ai-chatbot.lenilani.com",  # WWW variant
 ]
 
 # Add origins from environment variable if provided
