@@ -19,14 +19,22 @@ class HubSpotService:
         self.portal_id = os.getenv("HUBSPOT_PORTAL_ID")
         self.base_url = "https://api.hubapi.com"
         
+        # Enhanced logging for debugging
         if not self.api_key:
             logger.warning("HUBSPOT_API_KEY not found. HubSpot integration disabled.")
+        elif self.api_key == "your_hubspot_api_key_here":
+            logger.error("HUBSPOT_API_KEY is still set to placeholder value! Please update .env file.")
+        else:
+            logger.info(f"HubSpot Service initialized with API key: {'*' * 10}")
+            if self.portal_id:
+                logger.info(f"HubSpot Portal ID: {self.portal_id}")
     
     def create_or_update_contact(self, contact_data: Dict[str, Any]) -> Dict[str, Any]:
         """Create or update a contact in HubSpot"""
         
-        if not self.api_key:
-            logger.info("HubSpot disabled - would create contact: %s", contact_data)
+        if not self.api_key or self.api_key == "your_hubspot_api_key_here":
+            logger.warning("HubSpot disabled - API key not properly configured")
+            logger.info("Would create contact with data: %s", contact_data)
             return {"success": False, "error": "HubSpot API key not configured"}
         
         # Prepare contact properties for HubSpot
@@ -186,10 +194,14 @@ class HubSpotService:
         }
         
         try:
+            logger.debug(f"Fetching contact by email: {email}")
             response = requests.get(url, headers=headers)
+            logger.debug(f"HubSpot API response status: {response.status_code}")
+            
             if response.status_code == 200:
                 return response.json()
             elif response.status_code == 404:
+                logger.info(f"Contact not found in HubSpot: {email}")
                 return None  # Contact doesn't exist
             else:
                 logger.error(f"Error fetching contact: {response.status_code} - {response.text}")
@@ -209,9 +221,16 @@ class HubSpotService:
         
         payload = {"properties": properties}
         
+        logger.info(f"Creating new contact in HubSpot with email: {properties.get('email')}")
+        logger.debug(f"Contact properties: {properties}")
+        
         response = requests.post(url, headers=headers, json=payload)
+        logger.debug(f"HubSpot API response status: {response.status_code}")
+        
         if response.status_code == 201:
-            return response.json()
+            contact_data = response.json()
+            logger.info(f"Successfully created HubSpot contact ID: {contact_data.get('id')}")
+            return contact_data
         else:
             logger.error(f"Error creating contact: {response.status_code} - {response.text}")
             return None
@@ -274,7 +293,7 @@ class HubSpotService:
         score = 0
         
         # Business type scoring
-        business_type = contact_data.get("business_type", "").lower()
+        business_type = (contact_data.get("business_type") or "").lower()
         type_scores = {
             "tourism": 20, "restaurant": 15, "agriculture": 15,
             "retail": 10, "technology": 20, "real_estate": 12
@@ -282,7 +301,7 @@ class HubSpotService:
         score += type_scores.get(business_type, 5)
         
         # Island scoring (market size)
-        island = contact_data.get("island", "").lower()
+        island = (contact_data.get("island") or "").lower()
         island_scores = {
             "oahu": 15, "maui": 12, "big_island": 10, 
             "kauai": 8, "molokai": 5, "lanai": 5
@@ -290,7 +309,7 @@ class HubSpotService:
         score += island_scores.get(island, 5)
         
         # Timeline urgency
-        timeline = contact_data.get("timeline", "").lower()
+        timeline = (contact_data.get("timeline") or "").lower()
         if "asap" in timeline or "immediately" in timeline:
             score += 25
         elif "month" in timeline:
@@ -299,7 +318,7 @@ class HubSpotService:
             score += 15
         
         # Budget indicators
-        budget = contact_data.get("budget_range", "").lower()
+        budget = (contact_data.get("budget_range") or "").lower()
         if "50k" in budget or "high" in budget:
             score += 25
         elif "20k" in budget or "medium" in budget:
@@ -353,8 +372,9 @@ class HubSpotService:
         
         total_value = 0
         for service in services:
+            service_lower = (service or "").lower()
             for key, value in service_values.items():
-                if key in service.lower():
+                if key in service_lower:
                     total_value += value
                     break
         
@@ -363,7 +383,8 @@ class HubSpotService:
             total_value = 10000
         
         # Timeline urgency multiplier
-        if "asap" in timeline.lower():
+        timeline_lower = (timeline or "").lower()
+        if "asap" in timeline_lower:
             total_value = int(total_value * 1.2)
         
         return total_value
@@ -381,8 +402,9 @@ class HubSpotService:
         }
         
         days = 60  # Default 2 months
+        timeline_lower = (timeline or "").lower()
         for key, value in days_map.items():
-            if key in timeline.lower():
+            if key in timeline_lower:
                 days = value
                 break
         

@@ -66,8 +66,12 @@ class LeadCaptureService:
             
             # Send to HubSpot if configured
             hubspot_sent = False
-            if self.hubspot_api_key:
+            if self.hubspot_api_key and self.hubspot_api_key != "your_hubspot_api_key_here":
+                logger.info("Attempting to send lead to HubSpot...")
                 hubspot_sent = await self._send_to_hubspot(enriched_lead)
+                logger.info(f"HubSpot send result: {hubspot_sent}")
+            else:
+                logger.warning("HubSpot API key not properly configured - skipping HubSpot integration")
             
             # Send to webhook if configured
             webhook_sent = False
@@ -212,7 +216,10 @@ class LeadCaptureService:
     async def _send_to_hubspot(self, lead_data: Dict[str, Any]) -> bool:
         """Send lead to HubSpot CRM"""
         try:
+            logger.info(f"_send_to_hubspot called with lead: {lead_data.get('email')}")
+            
             if not self.hubspot_form_guid:
+                logger.info("No HubSpot form GUID - using Contacts API instead")
                 # Use Contacts API instead
                 return await self._create_hubspot_contact(lead_data)
             
@@ -249,6 +256,7 @@ class LeadCaptureService:
     async def _create_hubspot_contact(self, lead_data: Dict[str, Any]) -> bool:
         """Create HubSpot contact using the HubSpot service"""
         try:
+            logger.info("Creating HubSpot contact via HubSpot service...")
             from api_backend.services.hubspot_service import hubspot_service
             
             # Prepare contact data for HubSpot service
@@ -269,7 +277,9 @@ class LeadCaptureService:
             }
             
             # Create or update contact
+            logger.info(f"Calling hubspot_service.create_or_update_contact with email: {contact_data.get('email')}")
             result = hubspot_service.create_or_update_contact(contact_data)
+            logger.info(f"HubSpot service result: {result}")
             
             if result.get("success"):
                 logger.info(f"Lead sent to HubSpot successfully: {lead_data.get('lead_id')} - Contact ID: {result.get('contact_id')}")
@@ -299,7 +309,7 @@ class LeadCaptureService:
                 return False
                 
         except Exception as e:
-            logger.error(f"Error creating HubSpot contact: {str(e)}")
+            logger.error(f"Error creating HubSpot contact: {str(e)}", exc_info=True)
             return False
     
     def _get_follow_up_recommendation(self, lead_data: Dict[str, Any]) -> str:
